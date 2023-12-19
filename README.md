@@ -28,101 +28,93 @@ I wrote this in Korean as I'm currently short on time. If I have the time later,
 ## Project Structure
 ```
 .
-├── build.gradle
-├── gradle
-│   └── wrapper
-│       ├── gradle-wrapper.jar
-│       └── gradle-wrapper.properties
-├── gradlew
-├── gradlew.bat
-├── settings.gradle
-└── src
-    ├── main
-    │   ├── java
-    │   │   └── com
-    │   │       └── example
-    │   │           └── boilerplate
-    │   │               ├── Application.java
-    │   │               ├── api
-    │   │               │   ├── token
-    │   │               │   │   ├── controller
-    │   │               │   │   │   └── TokenController.java
-    │   │               │   │   ├── dto
-    │   │               │   │   │   ├── request
-    │   │               │   │   │   │   ├── CreateTokenRequestDto.java
-    │   │               │   │   │   │   └── RenewTokenRequestDto.java
-    │   │               │   │   │   └── response
-    │   │               │   │   │       ├── AccessTokenResponseDto.java
-    │   │               │   │   │       ├── RefreshTokenResponseDto.java
-    │   │               │   │   │       └── TokenResponseDto.java
-    │   │               │   │   ├── entity
-    │   │               │   │   │   └── RefreshTokenEntity.java
-    │   │               │   │   ├── repository
-    │   │               │   │   │   └── TokenRepository.java
-    │   │               │   │   └── service
-    │   │               │   │       └── TokenService.java
-    │   │               │   └── user
-    │   │               │       ├── controller
-    │   │               │       │   └── UserController.java
-    │   │               │       ├── dto
-    │   │               │       │   ├── request
-    │   │               │       │   │   ├── CreateUserRequestDto.java
-    │   │               │       │   │   ├── ReplaceUserRequestDto.java
-    │   │               │       │   │   └── UpdateUserRequestDto.java
-    │   │               │       │   └── response
-    │   │               │       │       ├── CreateUserResponseDto.java
-    │   │               │       │       ├── GetUserResponseDto.java
-    │   │               │       │       ├── ReplaceUserResponseDto.java
-    │   │               │       │       └── UpdateUserResponseDto.java
-    │   │               │       ├── entity
-    │   │               │       │   └── UserEntity.java
-    │   │               │       ├── repository
-    │   │               │       │   └── UserRepository.java
-    │   │               │       └── service
-    │   │               │           └── UserService.java
-    │   │               └── global
-    │   │                   ├── aop
-    │   │                   │   ├── Auth.java
-    │   │                   │   └── AuthAop.java
-    │   │                   ├── auth
-    │   │                   │   ├── TokenManager.java
-    │   │                   │   └── dto
-    │   │                   │       └── internal
-    │   │                   │           ├── AccessTokenInternalDto.java
-    │   │                   │           ├── AccessTokenPayloadInternalDto.java
-    │   │                   │           ├── RefreshTokenInternalDto.java
-    │   │                   │           ├── RefreshTokenPayloadInternalDto.java
-    │   │                   │           └── TokenInternalDto.java
-    │   │                   ├── config
-    │   │                   │   └── SwaggerConfig.java
-    │   │                   ├── dto
-    │   │                   │   └── response
-    │   │                   │       ├── ExceptionResponseDto.java
-    │   │                   │       └── SuccessResponseDto.java
-    │   │                   ├── entity
-    │   │                   │   ├── BaseEntity.java
-    │   │                   │   ├── UserRole.java
-    │   │                   │   └── UserStatus.java
-    │   │                   ├── exception
-    │   │                   │   ├── BusinessException.java
-    │   │                   │   ├── CommonException.java
-    │   │                   │   ├── ExceptionType.java
-    │   │                   │   └── GlobalExceptionHandler.java
-    │   │                   ├── repository
-    │   │                   │   └── BaseRepository.java
-    │   │                   └── util
-    │   │                       └── TimeUtil.java
-    │   └── resources
-    │       └── application.yml
-    └── test
-        └── java
-            └── com
-                └── example
-                    └── boilerplate
-                        ├── ApplicationTests.java
-                        └── global
-                            └── auth
-                                └── TokenManagerTest.java
+.
+├── main
+│   ├── java
+│   │   └── com
+│   │       └── example
+│   │           └── boilerplate
+│   │               ├── Application.java
+│   │               ├── api
+│   │               │   ├── token
+│   │               │   │   ├── controller
+│   │               │   │   │   └── TokenController.java
+│   │               │   │   ├── dto
+│   │               │   │   │   ├── request
+│   │               │   │   │   │   ├── CreateTokenRequestDto.java
+│   │               │   │   │   │   └── RenewTokenRequestDto.java
+│   │               │   │   │   └── response
+│   │               │   │   │       ├── AccessTokenResponseDto.java
+│   │               │   │   │       ├── RefreshTokenResponseDto.java
+│   │               │   │   │       └── TokenResponseDto.java
+│   │               │   │   ├── entity
+│   │               │   │   │   └── RefreshTokenEntity.java
+│   │               │   │   ├── repository
+│   │               │   │   │   └── TokenRepository.java
+│   │               │   │   └── service
+│   │               │   │       └── TokenService.java
+│   │               │   └── user
+│   │               │       ├── controller
+│   │               │       │   └── UserController.java
+│   │               │       ├── dto
+│   │               │       │   ├── request
+│   │               │       │   │   ├── CreateUserRequestDto.java
+│   │               │       │   │   ├── ReplaceUserRequestDto.java
+│   │               │       │   │   └── UpdateUserRequestDto.java
+│   │               │       │   └── response
+│   │               │       │       ├── CreateUserResponseDto.java
+│   │               │       │       ├── GetUserResponseDto.java
+│   │               │       │       ├── ReplaceUserResponseDto.java
+│   │               │       │       └── UpdateUserResponseDto.java
+│   │               │       ├── entity
+│   │               │       │   └── UserEntity.java
+│   │               │       ├── repository
+│   │               │       │   └── UserRepository.java
+│   │               │       └── service
+│   │               │           └── UserService.java
+│   │               └── global
+│   │                   ├── aop
+│   │                   │   ├── Auth.java
+│   │                   │   └── AuthAop.java
+│   │                   ├── auth
+│   │                   │   ├── TokenManager.java
+│   │                   │   └── dto
+│   │                   │       └── internal
+│   │                   │           ├── AccessTokenInternalDto.java
+│   │                   │           ├── AccessTokenPayloadInternalDto.java
+│   │                   │           ├── RefreshTokenInternalDto.java
+│   │                   │           ├── RefreshTokenPayloadInternalDto.java
+│   │                   │           └── TokenInternalDto.java
+│   │                   ├── config
+│   │                   │   └── SwaggerConfig.java
+│   │                   ├── dto
+│   │                   │   └── response
+│   │                   │       ├── ExceptionResponseDto.java
+│   │                   │       └── SuccessResponseDto.java
+│   │                   ├── entity
+│   │                   │   ├── BaseEntity.java
+│   │                   │   ├── UserRole.java
+│   │                   │   └── UserStatus.java
+│   │                   ├── exception
+│   │                   │   ├── BusinessException.java
+│   │                   │   ├── CommonException.java
+│   │                   │   ├── ExceptionType.java
+│   │                   │   └── GlobalExceptionHandler.java
+│   │                   ├── repository
+│   │                   │   └── BaseRepository.java
+│   │                   └── util
+│   │                       └── TimeUtil.java
+│   └── resources
+│       └── application.yml
+└── test
+    └── java
+        └── com
+            └── example
+                └── boilerplate
+                    ├── ApplicationTests.java
+                    └── global
+                        └── auth
+                            └── TokenManagerTest.java
 ```
 
 ## ToDo
