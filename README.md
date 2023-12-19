@@ -1,4 +1,6 @@
 # Spring Boot Boilerplate(Work In Progress)
+I wrote this in Korean as I'm currently short on time. If I have the time later, I'll rewrite it in English.
+
 ## Getting started
 
 예제들을 사용하기 전, 아래 절차를 밟아 토큰을 발급받아야 함.
