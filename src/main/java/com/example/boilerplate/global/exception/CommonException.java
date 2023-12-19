@@ -1,0 +1,27 @@
+package com.example.boilerplate.global.exception;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
+public enum CommonException implements ExceptionType {
+    // GLOBAL
+    GLOBAL_UNKNOWN_EXCEPTION("00000", "GLOBAL_UNKNOWN_EXCEPTION"),
+
+    // DB
+    DB_UNKNOWN_EXCEPTION("10000", "DB_UNKNOWN_EXCEPTION"),
+    DB_NOT_FOUND_EXCEPTION("10001", "DB_NOT_FOUND_EXCEPTION"),
+    DB_ALREADY_EXIST_EXCEPTION("10002", "DB_ALREADY_EXIST_EXCEPTION"),
+
+    // TOKEN
+    TOKEN_UNKNOWN_EXCEPTION("20000", "TOKEN_UNKNOWN_EXCEPTION"),
+    TOKEN_UNAUTHORIZED_EXCEPTION("20001", "TOKEN_UNAUTHORIZED_EXCEPTION"),
+    TOKEN_CREATION_EXCEPTION("20002", "TOKEN_CREATION_EXCEPTION"),
+    TOKEN_INVALID_EXCEPTION("20003", "TOKEN_INVALID_EXCEPTION"),
+    TOKEN_NOT_FOUND_EXCEPTION("20004", "TOKEN_NOT_FOUND_EXCEPTION"),
+    TOKEN_EXPIRED_EXCEPTION("20005", "TOKEN_EXPIRED_EXCEPTION"),
+    ;
+    private final String status;
+    private final String message;
+}

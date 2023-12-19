@@ -1,0 +1,17 @@
+package com.example.boilerplate.global.repository;
+
+import com.example.boilerplate.global.exception.BusinessException;
+import com.example.boilerplate.global.exception.CommonException;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.NoRepositoryBean;
+
+import java.util.Optional;
+
+@NoRepositoryBean
+public interface BaseRepository<T, ID> extends JpaRepository<T, ID> {
+    default T findByIdIfNullThrow(ID id) {
+        Optional<T> entity = this.findById(id);
+        entity.orElseThrow(() -> new BusinessException(CommonException.DB_NOT_FOUND_EXCEPTION));
+        return entity.get();
+    }
+}

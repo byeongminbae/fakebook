@@ -1,0 +1,4 @@
+token:
+  secret: 5d20797a2358f9e2390fd457589a869655bf2b05e641c07c00b21a5ce54e6fda02ff07c7d4619ae42410be1621b934fcd73fa7bf06b71a694b879453f0a4e3f1
+  access-token-expired-offset: 86400
+  refresh-token-expired-offset: 31536000

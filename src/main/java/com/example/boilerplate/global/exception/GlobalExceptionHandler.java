@@ -1,0 +1,19 @@
+package com.example.boilerplate.global.exception;
+
+import com.example.boilerplate.global.dto.response.ExceptionResponseDto;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+    @ExceptionHandler(BusinessException.class)
+    protected ResponseEntity<ExceptionResponseDto> businessExceptionHandler(BusinessException businessException) {
+        ExceptionResponseDto exceptionResponseDto = ExceptionResponseDto.builder()
+                .status(businessException.getStatus())
+                .message(businessException.getMessage())
+                .build();
+
+        return ResponseEntity.ok(exceptionResponseDto);
+    }
+}
