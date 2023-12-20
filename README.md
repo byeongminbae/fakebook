@@ -32,7 +32,7 @@ http://127.0.0.1:8080/swagger-ui/index.html
 
 API 패키지의 예제들은 전부 삭제해도 무방합니다.
 
-- 유저 기본 CRUD 예제(샘플) 제공
+- 유저 기본 CRUD 예제 제공
 - 토큰(Access Token, Refresh Token) 기반 인증 API 기본 제공
 
 ## Convention
