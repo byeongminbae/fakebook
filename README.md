@@ -14,9 +14,9 @@ I wrote this in Korean as I'm currently short on time. If I have the time later,
 $ ./gradlew bootrun
 ```
 
-### Swagger URL
-
-http://127.0.0.1:8080/swagger-ui/index.html
+### Endpoints
+- http://127.0.0.1:8080/swagger-ui/index.html
+- http://127.0.0.1:8080/actuator/health
 
 ## Features
 
