@@ -15,8 +15,8 @@ $ ./gradlew bootrun
 ```
 
 ### Endpoints
-- http://127.0.0.1:8080/swagger-ui/index.html
-- http://127.0.0.1:8080/actuator/health
+- Swagger: http://127.0.0.1:8080/swagger-ui/index.html
+- Health Check: http://127.0.0.1:8080/actuator/health
 
 ## Features
 
