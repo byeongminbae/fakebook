@@ -12,9 +12,11 @@ I wrote this in Korean as I'm currently short on time. If I have the time later,
 
 ```java
 $ ./gradlew bootrun
+
 ```
 
 ### Endpoints
+
 - Swagger: http://127.0.0.1:8080/swagger-ui/index.html
 - Health Check: http://127.0.0.1:8080/actuator/health
 
@@ -26,14 +28,16 @@ $ ./gradlew bootrun
     1. 유저 권한에 따른 API 접근 제어 기능
     2. 토큰 유저 아이디와 URL 상의 유저 아이디 비교를 위한 공통 로직 추상화
 - BaseRepository 에서 JpaRepository 오버라이딩을 통한 공통 코드 추상화
-    1. ID 기반 조회 시 데이터가 존재하지 않을 경우 예외 발생
+    1. ID 기반 조회 시 데이터가 존재하지 않을 경우 예외 처리
+- 모든 엔티티가 가지고 있는 특성을 BaseEntity 로 추상화.
+- 애플리케이션 전반에 공통적으로 사용되는 예외는 CommonException 에 정의
 
 ### API
 
 API 패키지의 예제들은 전부 삭제해도 무방합니다.
 
-- 유저 기본 CRUD 예제 제공
-- 토큰(Access Token, Refresh Token) 기반 인증 API 기본 제공
+- 유저 CRUD API 예제 제공
+- 토큰(Access Token, Refresh Token) 기반 인증 API 제공
 
 ## Convention
 
@@ -41,105 +45,59 @@ API 패키지의 예제들은 전부 삭제해도 무방합니다.
 2. global 패키지는 다른 패키지를 참조하지 않는다.
 3. 네이밍은 명확하다면 길어도 문제 없다.
 4. Internal DTO는 클라이언트에게 전송하기 전에 Response DTO로 변환되어야 한다.
+5. 테스트 코드는 Given, When, Then 컨벤션으로 성공, 실패 케이스를 작성한다.
+6. 특정 API 에 종속적인 예외는 ExceptionType 구현하여 해당 API 패키지 아래에 선언한다.
+7. 모든 API 응답은 SuccessResponseDto 통해 응답하여야 한다.
 
-## Project Structure
+## Q&A
 
+### API 를 사용할 수 없어요
+
+API 를 사용하려면 다음 절차를 따라야 합니다.
+
+1. 스프링 부트 실행
+2. http://127.0.0.1:8080/swagger-ui/index.html 접속
+3. POST /users 에서 유저를 생성
+4. POST /token 에 위에서 생성한 유저 아이디를 넣고 토큰(AccessToken, RefreshToken) 발급
+5. Swagger 최상단 오른쪽의 자물쇠 버튼(**Authorize**) 을 눌러 생성된 AccessToken 복사 붙여넣기
+
+### @Auth 어노테이션에 대해 더 설명해주세요
+
+```java
+@Auth(userRoles = {UserRole.ADMIN, UserRole.USER}, pathVariableUserId = "userId")
+    @Operation(summary = "Get user", security = @SecurityRequirement(name = "Authorization"))
+    @GetMapping("/{userId}")
+    public SuccessResponseDto<GetUserResponseDto> getUser(@PathVariable Long userId) {}
 ```
-.
-.
-├── main
-│   ├── java
-│   │   └── com
-│   │       └── example
-│   │           └── boilerplate
-│   │               ├── Application.java
-│   │               ├── api
-│   │               │   ├── token
-│   │               │   │   ├── controller
-│   │               │   │   │   └── TokenController.java
-│   │               │   │   ├── dto
-│   │               │   │   │   ├── request
-│   │               │   │   │   │   ├── CreateTokenRequestDto.java
-│   │               │   │   │   │   └── RenewTokenRequestDto.java
-│   │               │   │   │   └── response
-│   │               │   │   │       ├── AccessTokenResponseDto.java
-│   │               │   │   │       ├── RefreshTokenResponseDto.java
-│   │               │   │   │       └── TokenResponseDto.java
-│   │               │   │   ├── entity
-│   │               │   │   │   └── RefreshTokenEntity.java
-│   │               │   │   ├── repository
-│   │               │   │   │   └── TokenRepository.java
-│   │               │   │   └── service
-│   │               │   │       └── TokenService.java
-│   │               │   └── user
-│   │               │       ├── controller
-│   │               │       │   └── UserController.java
-│   │               │       ├── dto
-│   │               │       │   ├── request
-│   │               │       │   │   ├── CreateUserRequestDto.java
-│   │               │       │   │   ├── ReplaceUserRequestDto.java
-│   │               │       │   │   └── UpdateUserRequestDto.java
-│   │               │       │   └── response
-│   │               │       │       ├── CreateUserResponseDto.java
-│   │               │       │       ├── GetUserResponseDto.java
-│   │               │       │       ├── ReplaceUserResponseDto.java
-│   │               │       │       └── UpdateUserResponseDto.java
-│   │               │       ├── entity
-│   │               │       │   └── UserEntity.java
-│   │               │       ├── repository
-│   │               │       │   └── UserRepository.java
-│   │               │       └── service
-│   │               │           └── UserService.java
-│   │               └── global
-│   │                   ├── aop
-│   │                   │   ├── Auth.java
-│   │                   │   └── AuthAop.java
-│   │                   ├── auth
-│   │                   │   ├── TokenManager.java
-│   │                   │   └── dto
-│   │                   │       └── internal
-│   │                   │           ├── AccessTokenInternalDto.java
-│   │                   │           ├── AccessTokenPayloadInternalDto.java
-│   │                   │           ├── RefreshTokenInternalDto.java
-│   │                   │           ├── RefreshTokenPayloadInternalDto.java
-│   │                   │           └── TokenInternalDto.java
-│   │                   ├── config
-│   │                   │   └── SwaggerConfig.java
-│   │                   ├── dto
-│   │                   │   └── response
-│   │                   │       ├── ExceptionResponseDto.java
-│   │                   │       └── SuccessResponseDto.java
-│   │                   ├── entity
-│   │                   │   ├── BaseEntity.java
-│   │                   │   ├── UserRole.java
-│   │                   │   └── UserStatus.java
-│   │                   ├── exception
-│   │                   │   ├── BusinessException.java
-│   │                   │   ├── CommonException.java
-│   │                   │   ├── ExceptionType.java
-│   │                   │   └── GlobalExceptionHandler.java
-│   │                   ├── repository
-│   │                   │   └── BaseRepository.java
-│   │                   └── util
-│   │                       └── TimeUtil.java
-│   └── resources
-│       └── application.yml
-└── test
-    └── java
-        └── com
-            └── example
-                └── boilerplate
-                    ├── ApplicationTests.java
-                    └── global
-                        └── auth
-                            └── TokenManagerTest.java
 
+@Auth 이 붙어있는 컨트롤러에 토큰과 함께 요청이 왔다고 가정해봅시다.
+
+AuthAop 객체의 before 메서드가 호출이 되는데 이는 3가지 과정을 거쳐 요청을 받아들일지 예외를 던질지 판단합니다.
+
+1. 요청에 담겨있는 토큰을 가져와 디코딩합니다. 물론, 만료되었거나 유효하지 않다면 예외가 발생합니다.
+2. 토큰 내의 userRole 이 @Auth 에 나열된 userRoles 에 포함되는지 체크합니다.
+3. 요청에 적힌 userId 와 토큰에 적힌 유저 아이디가 동일한지 체크합니다. 요청에 적힌 유저아이디를 식별할 수 있는 이유는 pathVariableUserId 에 필드명을 명시하였기 때문에 가능합니다.
+
+pathVariableUserId = "userId" , @GetMapping("/{userId}"), @PathVariable Long userId
+
+이 세가지에 들어가는 “userId” 라는 문자열은 동일해야 합니다. 가령 imUserId 라고 쓰고 싶다면 아래와 같이 하면 됩니다.
+
+```java
+@Auth(userRoles = {UserRole.ADMIN, UserRole.USER}, pathVariableUserId = "imUserId")
+    @Operation(summary = "Get user", security = @SecurityRequirement(name = "Authorization"))
+    @GetMapping("/{imUserId}")
+    public SuccessResponseDto<GetUserResponseDto> getUser(@PathVariable Long imUserId) {}
+```
+
+만약, userId 체크 기능이 필요하지 않다면 아래와 같이 비활성화 할 수 있습니다.
+
+```java
+@Auth(userRoles = {UserRole.ADMIN, UserRole.USER})
 ```
 
 ## ToDo
 
 - 테스트 코드 작성
-    - Given, When, Then 으로 테스트 성공/실패 케이스 작성
-    - AuthAop: 다른 role 로 접근하는 케이스, Auth 어노테이션에 requestParamUserId 넘겼는데, 다른 userId 로 접근하는 케이스
+    - AuthAop: 다른 role 로 접근하는 케이스, Auth 어노테이션에 pathVariableUserId 넘겼는데, 다른 userId 로 접근하는 케이스
 - Refresh Token 에 userId 가 이미 담겨있는데 DB 에서 긁어올때 userId 를 검색조건으로 두는게 맞을까?
 - login api
