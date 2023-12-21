@@ -4,40 +4,26 @@ I wrote this in Korean as I'm currently short on time. If I have the time later,
 
 ## Getting Started
 
-### **Dependencies**
+Spring Boot를 활용한 REST API 개발에 대한 저의 생각을 보일러 플레이트화 하여 공유하는 레포지토리 입니다.
 
-- OpenJDK 17
+주로 유지 보수가 용이한 코드 작성을 위한 프로젝트 구조, AOP, 테스트 코드, 예외 처리 등을 다룰 예정입니다.
 
-### **Executing**
+시작하기 전에는 OpenJDK 17이 설치되어 있어야 합니다.
 
-```java
-$ ./gradlew bootrun
-
-```
+API 패키지에 있는 예제들은 필요에 따라 삭제할 수 있으며, 이 프로젝트는 사용자 CRUD API와 토큰을 기반으로 한 인증 API를 제공하고 있습니다.
 
 ### Endpoints
 
 - Swagger: http://127.0.0.1:8080/swagger-ui/index.html
 - Health Check: http://127.0.0.1:8080/actuator/health
 
-## Features
-
-### Global
+### Features
 
 - AOP를 활용한 전역 인증 로직 관심사 분리
     1. 유저 권한에 따른 API 접근 제어 기능
     2. 토큰 유저 아이디와 URL 상의 유저 아이디 비교를 위한 공통 로직 추상화
 - BaseRepository 에서 JpaRepository 오버라이딩을 통한 공통 코드 추상화
     1. ID 기반 조회 시 데이터가 존재하지 않을 경우 예외 처리
-- 모든 엔티티가 가지고 있는 특성을 BaseEntity 로 추상화.
-- 애플리케이션 전반에 공통적으로 사용되는 예외는 CommonException 에 정의
-
-### API
-
-API 패키지의 예제들은 전부 삭제해도 무방합니다.
-
-- 유저 CRUD API 예제 제공
-- 토큰(Access Token, Refresh Token) 기반 인증 API 제공
 
 ## Q&A
 
