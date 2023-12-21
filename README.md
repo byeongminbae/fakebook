@@ -143,4 +143,3 @@ API 패키지의 예제들은 전부 삭제해도 무방합니다.
     - AuthAop: 다른 role 로 접근하는 케이스, Auth 어노테이션에 requestParamUserId 넘겼는데, 다른 userId 로 접근하는 케이스
 - Refresh Token 에 userId 가 이미 담겨있는데 DB 에서 긁어올때 userId 를 검색조건으로 두는게 맞을까?
 - login api
-- health api
