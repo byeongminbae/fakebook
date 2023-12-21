@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.annotation.RequestScope;
 
 @Tag(name = "User Controller", description = "User Controller")
 @RestController
@@ -24,28 +25,28 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-    @Auth(userRoles = {UserRole.ADMIN, UserRole.USER}, requestParamUserId = "userId")
+    @Auth(userRoles = {UserRole.ADMIN, UserRole.USER}, pathVariableUserId = "userId")
     @Operation(summary = "Get user", security = @SecurityRequirement(name = "Authorization"))
     @GetMapping("/{userId}")
-    public SuccessResponseDto<GetUserResponseDto> getUser(@RequestParam Long userId) {
+    public SuccessResponseDto<GetUserResponseDto> getUser(@PathVariable Long userId) {
         return userService.getUser(userId);
     }
 
-    @Auth(userRoles = {UserRole.ADMIN, UserRole.USER}, requestParamUserId = "userId")
+    @Auth(userRoles = {UserRole.ADMIN, UserRole.USER}, pathVariableUserId = "userId")
     @Operation(summary = "Update user", security = @SecurityRequirement(name = "Authorization"))
     @PatchMapping("/{userId}")
     public SuccessResponseDto<UpdateUserResponseDto> updateUser(
-            @RequestParam Long userId,
+            @PathVariable Long userId,
             @RequestBody UpdateUserRequestDto updateUserRequestDto
     ) {
         return userService.updateUser(userId, updateUserRequestDto);
     }
 
-    @Auth(userRoles = {UserRole.ADMIN, UserRole.USER}, requestParamUserId = "userId")
+    @Auth(userRoles = {UserRole.ADMIN, UserRole.USER}, pathVariableUserId = "userId")
     @Operation(summary = "Replace user", security = @SecurityRequirement(name = "Authorization"))
     @PutMapping("/{userId}")
     public SuccessResponseDto<ReplaceUserResponseDto> replaceUser(
-            @RequestParam Long userId,
+            @PathVariable Long userId,
             @RequestBody ReplaceUserRequestDto replaceUserRequestDto
     ) {
         return userService.replaceUser(userId, replaceUserRequestDto);
@@ -59,10 +60,10 @@ public class UserController {
         return userService.createUser(createUserRequestDto);
     }
 
-    @Auth(userRoles = {UserRole.ADMIN, UserRole.USER}, requestParamUserId = "userId")
+    @Auth(userRoles = {UserRole.ADMIN, UserRole.USER}, pathVariableUserId = "userId")
     @Operation(summary = "Delete user", security = @SecurityRequirement(name = "Authorization"))
     @DeleteMapping("/{userId}")
-    public SuccessResponseDto<Object> deleteUser(@RequestParam Long userId) {
+    public SuccessResponseDto<Object> deleteUser(@PathVariable Long userId) {
         return userService.deleteUser(userId);
     }
 }

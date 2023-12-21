@@ -11,6 +11,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Auth {
     UserRole[] userRoles();
-
-    String requestParamUserId() default "";
+    String pathVariableUserId() default "";
 }
