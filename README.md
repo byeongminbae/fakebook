@@ -6,11 +6,11 @@ I wrote this in Korean as I'm currently short on time. If I have the time later,
 
 Spring Boot를 활용한 REST API 개발에 대한 저의 생각을 보일러 플레이트화 하여 공유하는 레포지토리 입니다.
 
-주로 유지 보수가 용이한 코드 작성을 위한 프로젝트 구조, AOP, 테스트 코드, 예외 처리 등을 다룰 예정입니다.
+주로 유지 보수가 용이한 코드 작성을 위한 프로젝트 구조, AOP, 테스트 코드, 예외 처리 등의 내용이 포함될 예정입니다.
 
 시작하기 전에는 OpenJDK 17이 설치되어 있어야 합니다.
 
-API 패키지에 있는 예제들은 필요에 따라 삭제할 수 있으며, 이 프로젝트는 사용자 CRUD API와 토큰을 기반으로 한 인증 API를 제공하고 있습니다.
+API 패키지에 있는 예제들은 필요에 따라 삭제하셔도 됩니다.
 
 ### Endpoints
 
