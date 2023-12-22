@@ -91,3 +91,4 @@ API 를 사용하려면 다음 절차를 따라야 합니다.
     - AuthAop: 다른 role 로 접근하는 케이스, Auth 어노테이션에 pathVariableUserId 넘겼는데, 다른 userId 로 접근하는 케이스
 - Refresh Token 에 userId 가 이미 담겨있는데 DB 에서 긁어올때 userId 를 검색조건으로 두는게 맞을까?
 - login api
+- 로그아웃: 서버측 리프레시 토큰을 지운 뒤, 클라이언트 토큰을 모두 삭제한다.
