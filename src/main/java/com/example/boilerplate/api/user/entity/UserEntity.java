@@ -23,8 +23,9 @@ public class UserEntity extends BaseEntity {
     private UserRole userRole;
     private UserStatus userStatus;
 
-    // 영속성 전이. UserEntity 를 저장하기 전에 RefreshTokenEntity 를 먼저 저장하는 옵션
-    @OneToMany(cascade = CascadeType.ALL)
+    // cascade: 영속성 전이. UserEntity 를 저장하기 전에 RefreshTokenEntity 를 먼저 저장하는 옵션
+    // mappedBy: refreshTokenEntities 는 userEntity 필드와 매핑됨
+    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL)
     private List<RefreshTokenEntity> refreshTokenEntities;
 
     public void appendRefreshTokenEntity(RefreshTokenEntity refreshTokenEntity) {
