@@ -41,26 +41,6 @@ API 패키지에 있는 예제들은 필요에 따라 삭제하셔도 됩니다.
     - GET /users/{userId}: 내 정보 및 다른사람 정보 보기
     - PATCH /users/{userId}/password: 패스워드 변경
 
-## user schema
-
-username: String
-
-email: String
-
-phone: String
-
-isBlacklisted: Boolean
-
-blacklistedAt: LocalDateTime
-
-isDeleted: Boolean
-
-deletedAt: LocalDateTime 
-
-userRole: Enum
-
-password: String
-
 ## Q&A
 
 ### @Auth 어노테이션에 대해 더 설명해주세요
