@@ -18,12 +18,7 @@ API 패키지에 있는 예제들은 필요에 따라 삭제할 수 있으며, �
 - Health Check: http://127.0.0.1:8080/actuator/health
 
 ### Features
-
-- AOP를 활용한 전역 인증 로직 관심사 분리
-    1. 유저 권한에 따른 API 접근 제어 기능
-    2. 토큰 유저 아이디와 URL 상의 유저 아이디 비교를 위한 공통 로직 추상화
-- BaseRepository 에서 JpaRepository 오버라이딩을 통한 공통 코드 추상화
-    1. ID 기반 조회 시 데이터가 존재하지 않을 경우 예외 처리
+... 
 
 ## Q&A
 
