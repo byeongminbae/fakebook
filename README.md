@@ -17,8 +17,49 @@ API 패키지에 있는 예제들은 필요에 따라 삭제하셔도 됩니다.
 - Swagger: http://127.0.0.1:8080/swagger-ui/index.html
 - Health Check: http://127.0.0.1:8080/actuator/health
 
-### Features
-... 
+## ToDo
+
+- 테스트 코드 작성
+    - AuthAop: 다른 role 로 접근하는 케이스, Auth 어노테이션에 pathVariableUserId 넘겼는데, 다른 userId 로 접근하는 케이스
+- Refresh Token 에 userId 가 이미 담겨있더라도 db 에서 검색할 땐 userId 를 꼭 포함해서 검색하도록 하자(userId 가 없을 경우를 생각)
+- auth
+    - POST /auth/token/sign-in: 아이디와 해싱된 처리된 패스워드 기반으로 토큰 발급
+    - POST /auth/token/sign-out: 서버측 리프레시 토큰을 지운 뒤, 클라이언트 토큰을 모두 삭제한다.
+    - POST /auth/token/renew: 기존 accessToken 을 가지고 refreshToken 을 서버에 전송하면 accessToken 재발급
+- admin(어드민 권한이 있어야 함)
+    - GET /admin/users/{userId}: 유저 조회
+    - PATCH /admin/users/{userId}: 유저 정보 수정(username, email, phone, userRole)
+    - DELETE /admin/users/{userId}: 유저 강제 회원탈퇴
+    - PATCH /admin/users/{userId}/password: 유저 패스워드 변경
+    - POST /admin/users/{userId}/approve: 유저 가입 승인(승인 후 취소 불가)
+    - POST /admin/users/{userId}/reject: 유저 가입 반려(반려는 승인으로 바뀔 수 있음)
+    - GET /admin/users/{userId}/blacklist: 블랙리스트 조회
+    - POST /admin/users/{userId}/blacklist: 블랙리스트 등록
+    - DELETE /admin/users/{userId}/blacklist: 블랙리스트 해제
+
+- user
+    - GET /users/{userId}: 내 정보 및 다른사람 정보 보기
+    - PATCH /users/{userId}/password: 패스워드 변경
+
+## user schema
+
+username: String
+
+email: String
+
+phone: String
+
+isBlacklisted: Boolean
+
+blacklistedAt: LocalDateTime
+
+isDeleted: Boolean
+
+deletedAt: LocalDateTime 
+
+userRole: Enum
+
+password: String
 
 ## Q&A
 
@@ -79,12 +120,3 @@ API 를 사용하려면 다음 절차를 따라야 합니다.
 8. 모든 엔티티는 BaseEntity 를 상속 받아야 한다.
 9. 애플리케이션 전반에 공통적으로 사용되는 예외는 CommonException 에 정의하되, 커스텀 예외가 필요한 경우 api 패키지 아래에 ExceptionType 을 상속받아 선언한다.
 
-
-## ToDo
-- 테스트 코드 작성
-    - AuthAop: 다른 role 로 접근하는 케이스, Auth 어노테이션에 pathVariableUserId 넘겼는데, 다른 userId 로 접근하는 케이스
-- Refresh Token 에 userId 가 이미 담겨있더라도 db 에서 검색할 땐 userId 를 꼭 포함해서 검색하도록 하자(실수 방지)
-- auth
-    - /auth/token/sign-in: 아이디와 해싱된 처리된 패스워드 기반으로 토큰 발급
-    - /auth/token/sign-out: 서버측 리프레시 토큰을 지운 뒤, 클라이언트 토큰을 모두 삭제한다.
-    - /auth/token/renew: 기존 accessToken 을 가지고 refreshToken 을 서버에 전송하면 accessToken 재발급
