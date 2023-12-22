@@ -38,6 +38,7 @@ API 패키지에 있는 예제들은 필요에 따라 삭제하셔도 됩니다.
     - DELETE /admin/users/{userId}/blacklist: 블랙리스트 해제
 
 - user
+    - POST /users/ :유저 생성
     - GET /users/{userId}: 내 정보 및 다른사람 정보 보기
     - PATCH /users/{userId}/password: 패스워드 변경
 
