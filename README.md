@@ -17,31 +17,6 @@ API 패키지에 있는 예제들은 필요에 따라 삭제하셔도 됩니다.
 - Swagger: http://127.0.0.1:8080/swagger-ui/index.html
 - Health Check: http://127.0.0.1:8080/actuator/health
 
-## ToDo
-
-- 테스트 코드 작성
-    - AuthAop: 다른 role 로 접근하는 케이스, Auth 어노테이션에 pathVariableUserId 넘겼는데, 다른 userId 로 접근하는 케이스
-- Refresh Token 에 userId 가 이미 담겨있더라도 db 에서 검색할 땐 userId 를 꼭 포함해서 검색하도록 하자(userId 가 없을 경우를 생각)
-- auth
-    - POST /auth/token/sign-in: 아이디와 해싱된 처리된 패스워드 기반으로 토큰 발급
-    - POST /auth/token/sign-out: 서버측 리프레시 토큰을 지운 뒤, 클라이언트 토큰을 모두 삭제한다.
-    - POST /auth/token/renew: 기존 accessToken 을 가지고 refreshToken 을 서버에 전송하면 accessToken 재발급
-- admin(어드민 권한이 있어야 함)
-    - GET /admin/users/{userId}: 유저 조회
-    - PATCH /admin/users/{userId}: 유저 정보 수정(username, email, phone, userRole)
-    - DELETE /admin/users/{userId}: 유저 강제 회원탈퇴
-    - PATCH /admin/users/{userId}/password: 유저 패스워드 변경
-    - POST /admin/users/{userId}/approve: 유저 가입 승인(승인 후 취소 불가)
-    - POST /admin/users/{userId}/reject: 유저 가입 반려(반려는 승인으로 바뀔 수 있음)
-    - GET /admin/users/{userId}/blacklist: 블랙리스트 조회
-    - POST /admin/users/{userId}/blacklist: 블랙리스트 등록
-    - DELETE /admin/users/{userId}/blacklist: 블랙리스트 해제
-
-- user
-    - POST /users/ :유저 생성
-    - GET /users/{userId}: 내 정보 및 다른사람 정보 보기
-    - PATCH /users/{userId}/password: 패스워드 변경
-
 ## Q&A
 
 ### @Auth 어노테이션에 대해 더 설명해주세요
