@@ -81,9 +81,10 @@ API 를 사용하려면 다음 절차를 따라야 합니다.
 
 
 ## ToDo
-
 - 테스트 코드 작성
     - AuthAop: 다른 role 로 접근하는 케이스, Auth 어노테이션에 pathVariableUserId 넘겼는데, 다른 userId 로 접근하는 케이스
-- Refresh Token 에 userId 가 이미 담겨있는데 DB 에서 긁어올때 userId 를 검색조건으로 두는게 맞을까?
-- login api
-- 로그아웃: 서버측 리프레시 토큰을 지운 뒤, 클라이언트 토큰을 모두 삭제한다.
+- Refresh Token 에 userId 가 이미 담겨있더라도 db 에서 검색할 땐 userId 를 꼭 포함해서 검색하도록 하자(실수 방지)
+- auth
+    - /auth/token/sign-in: 아이디와 해싱된 처리된 패스워드 기반으로 토큰 발급
+    - /auth/token/sign-out: 서버측 리프레시 토큰을 지운 뒤, 클라이언트 토큰을 모두 삭제한다.
+    - /auth/token/renew: 기존 accessToken 을 가지고 refreshToken 을 서버에 전송하면 accessToken 재발급
