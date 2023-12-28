@@ -1,12 +1,15 @@
 package com.example.boilerplate.api.user.dto.request;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.example.boilerplate.api.user.entity.UserEntity;
+import com.example.boilerplate.global.util.CryptoUtil;
 import lombok.Getter;
+
+import java.time.LocalDateTime;
 
 @Getter
 public class CreateUserRequestDto {
-    @Schema(description = "nickname")
-    private String nickname;
-    @Schema(description = "email")
+    private String signId;
+    private String signPassword;
     private String email;
+    private String phoneNumber;
 }

@@ -1,22 +1,21 @@
 package com.example.boilerplate.api.user.controller;
 
 import com.example.boilerplate.api.user.dto.request.CreateUserRequestDto;
-import com.example.boilerplate.api.user.dto.request.ReplaceUserRequestDto;
+import com.example.boilerplate.api.user.dto.request.UpdateUserPasswordRequestDto;
 import com.example.boilerplate.api.user.dto.request.UpdateUserRequestDto;
 import com.example.boilerplate.api.user.dto.response.CreateUserResponseDto;
-import com.example.boilerplate.api.user.dto.response.GetUserResponseDto;
-import com.example.boilerplate.api.user.dto.response.ReplaceUserResponseDto;
-import com.example.boilerplate.api.user.dto.response.UpdateUserResponseDto;
+import com.example.boilerplate.api.user.dto.response.GetUserInfoResponseDto;
 import com.example.boilerplate.api.user.service.UserService;
-import com.example.boilerplate.global.aop.Auth;
+import com.example.boilerplate.global.auth.aop.Auth;
 import com.example.boilerplate.global.dto.response.SuccessResponseDto;
+import com.example.boilerplate.global.dto.response.SuccessVoidResponseDto;
 import com.example.boilerplate.global.entity.UserRole;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.annotation.RequestScope;
 
 @Tag(name = "User Controller", description = "User Controller")
 @RestController
@@ -25,34 +24,7 @@ import org.springframework.web.context.annotation.RequestScope;
 public class UserController {
     private final UserService userService;
 
-    @Auth(userRoles = {UserRole.ADMIN, UserRole.USER}, pathVariableUserId = "userId")
-    @Operation(summary = "Get user", security = @SecurityRequirement(name = "Authorization"))
-    @GetMapping("/{userId}")
-    public SuccessResponseDto<GetUserResponseDto> getUser(@PathVariable Long userId) {
-        return userService.getUser(userId);
-    }
-
-    @Auth(userRoles = {UserRole.ADMIN, UserRole.USER}, pathVariableUserId = "userId")
-    @Operation(summary = "Update user", security = @SecurityRequirement(name = "Authorization"))
-    @PatchMapping("/{userId}")
-    public SuccessResponseDto<UpdateUserResponseDto> updateUser(
-            @PathVariable Long userId,
-            @RequestBody UpdateUserRequestDto updateUserRequestDto
-    ) {
-        return userService.updateUser(userId, updateUserRequestDto);
-    }
-
-    @Auth(userRoles = {UserRole.ADMIN, UserRole.USER}, pathVariableUserId = "userId")
-    @Operation(summary = "Replace user", security = @SecurityRequirement(name = "Authorization"))
-    @PutMapping("/{userId}")
-    public SuccessResponseDto<ReplaceUserResponseDto> replaceUser(
-            @PathVariable Long userId,
-            @RequestBody ReplaceUserRequestDto replaceUserRequestDto
-    ) {
-        return userService.replaceUser(userId, replaceUserRequestDto);
-    }
-
-    @Operation(summary = "Create user")
+    @Operation(summary = "User creation. Password encrypted with sha512.")
     @PostMapping
     public SuccessResponseDto<CreateUserResponseDto> createUser(
             @RequestBody CreateUserRequestDto createUserRequestDto
@@ -60,10 +32,52 @@ public class UserController {
         return userService.createUser(createUserRequestDto);
     }
 
-    @Auth(userRoles = {UserRole.ADMIN, UserRole.USER}, pathVariableUserId = "userId")
-    @Operation(summary = "Delete user", security = @SecurityRequirement(name = "Authorization"))
+    @Operation(
+            summary = "User retrieval. Token required for detailed self-retrieval",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @GetMapping("/{userId}")
+    public SuccessResponseDto<GetUserInfoResponseDto> getUser(
+            @PathVariable Long userId,
+            @Schema(hidden = true)
+            @RequestHeader(value = "Authorization", required = false) String authorizationHeader
+    ) {
+        return userService.getUser(userId, authorizationHeader);
+    }
+
+    @Auth(userRoles = {UserRole.USER, UserRole.ADMIN}, pathVariableUserId = "userId")
+    @Operation(
+            summary = "User update. Fields are optional",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @PatchMapping("/{userId}")
+    public SuccessVoidResponseDto updateUser(
+            @PathVariable Long userId,
+            @RequestBody UpdateUserRequestDto updateUserRequestDto
+    ) {
+        return userService.updateUser(userId, updateUserRequestDto);
+    }
+
+    @Auth(userRoles = {UserRole.USER, UserRole.ADMIN}, pathVariableUserId = "userId")
+    @Operation(
+            summary = "User password update",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @PatchMapping("/{userId}/password")
+    public SuccessVoidResponseDto updateUserPassword(
+            @PathVariable Long userId,
+            @RequestBody UpdateUserPasswordRequestDto updateUserPasswordRequestDto
+    ) {
+        return userService.updateUserPassword(userId, updateUserPasswordRequestDto);
+    }
+
+    @Auth(userRoles = {UserRole.USER, UserRole.ADMIN}, pathVariableUserId = "userId")
+    @Operation(
+            summary = "User logical deletion",
+            security = @SecurityRequirement(name = "Authorization")
+    )
     @DeleteMapping("/{userId}")
-    public SuccessResponseDto<Object> deleteUser(@PathVariable Long userId) {
+    public SuccessVoidResponseDto deleteUser(@PathVariable Long userId) {
         return userService.deleteUser(userId);
     }
 }

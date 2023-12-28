@@ -1,17 +1,13 @@
 package com.example.boilerplate.global.dto.response;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
 
 @Getter
-@RequiredArgsConstructor
-public class SuccessResponseDto<T> {
+public class SuccessVoidResponseDto {
     private final LocalDateTime timestamp = LocalDateTime.now();
-    private final T data;
-    public SuccessResponseDto() {
-        data = null;
-    }
 }

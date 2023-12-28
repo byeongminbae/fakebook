@@ -2,9 +2,9 @@ package com.example.boilerplate.global.auth;
 
 import com.example.boilerplate.api.user.entity.UserEntity;
 import com.example.boilerplate.api.user.repository.UserRepository;
-import com.example.boilerplate.global.auth.dto.internal.TokenInternalDto;
+import com.example.boilerplate.global.auth.token.dto.internal.TokenInternalDto;
+import com.example.boilerplate.global.auth.token.TokenManager;
 import com.example.boilerplate.global.entity.UserRole;
-import com.example.boilerplate.global.entity.UserStatus;
 import com.example.boilerplate.global.exception.BusinessException;
 import com.example.boilerplate.global.exception.CommonException;
 import org.assertj.core.api.Assertions;
