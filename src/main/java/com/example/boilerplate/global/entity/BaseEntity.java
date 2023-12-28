@@ -1,6 +1,7 @@
 package com.example.boilerplate.global.entity;
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;

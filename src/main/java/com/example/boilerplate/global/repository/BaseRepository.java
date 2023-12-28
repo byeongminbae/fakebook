@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @NoRepositoryBean
 public interface BaseRepository<T, ID> extends JpaRepository<T, ID> {
-    default T findByIdIfNullThrow(ID id) {
+    default T findByIdThrowIfNull(ID id) {
         Optional<T> entity = this.findById(id);
         entity.orElseThrow(() -> new BusinessException(CommonException.DB_NOT_FOUND_EXCEPTION));
         return entity.get();

@@ -9,8 +9,8 @@ import com.example.boilerplate.api.user.dto.response.GetUserPrivateInfoResponseD
 import com.example.boilerplate.api.user.dto.response.GetUserPublicInfoResponseDto;
 import com.example.boilerplate.api.user.entity.UserEntity;
 import com.example.boilerplate.api.user.repository.UserRepository;
+import com.example.boilerplate.api.user.util.UserUtil;
 import com.example.boilerplate.global.auth.token.TokenManager;
-import com.example.boilerplate.global.auth.token.dto.internal.AccessTokenPayloadInternalDto;
 import com.example.boilerplate.global.dto.response.SuccessResponseDto;
 import com.example.boilerplate.global.dto.response.SuccessVoidResponseDto;
 import com.example.boilerplate.global.exception.BusinessException;
@@ -26,6 +26,7 @@ import java.util.Objects;
 public class UserService {
     private final TokenManager tokenManager;
     private final UserRepository userRepository;
+    private final UserUtil userUtil;
 
     public SuccessResponseDto<CreateUserResponseDto> createUser(CreateUserRequestDto createUserRequestDto) {
         UserEntity duplicatedUserEntity = userRepository.findBySignId(createUserRequestDto.getSignId());
@@ -48,14 +49,10 @@ public class UserService {
     }
 
     public SuccessResponseDto<GetUserInfoResponseDto> getUser(Long userId, String authorizationHeader) {
-        UserEntity opponentUserEntity = userRepository.findByIdIfNullThrow(userId);
+        UserEntity opponentUserEntity = userRepository.findByIdThrowIfNull(userId);
 
         if (!Objects.isNull(authorizationHeader)) {
-            AccessTokenPayloadInternalDto accessTokenPayloadInternalDto = tokenManager.decodeToken(authorizationHeader);
-
-            UserEntity requesterUserEntity = userRepository.findByIdIfNullThrow(
-                    accessTokenPayloadInternalDto.getUserId()
-            );
+            UserEntity requesterUserEntity = userUtil.getOwnerByAccessToken(authorizationHeader);
 
             if (opponentUserEntity.equals(requesterUserEntity))
                 return new SuccessResponseDto<>(GetUserPrivateInfoResponseDto.from(opponentUserEntity));
@@ -68,7 +65,7 @@ public class UserService {
             Long userId,
             UpdateUserRequestDto updateUserRequestDto
     ) {
-        UserEntity userEntity = userRepository.findByIdIfNullThrow(userId);
+        UserEntity userEntity = userRepository.findByIdThrowIfNull(userId);
 
         userEntity.setEmail(Objects.isNull(updateUserRequestDto.getEmail()) ?
                 userEntity.getEmail() : updateUserRequestDto.getEmail());
@@ -85,7 +82,7 @@ public class UserService {
             Long userId,
             UpdateUserPasswordRequestDto updateUserPasswordRequestDto
     ) {
-        UserEntity userEntity = userRepository.findByIdIfNullThrow(userId);
+        UserEntity userEntity = userRepository.findByIdThrowIfNull(userId);
 
         String oldSignPassword = updateUserPasswordRequestDto.getOldSignPassword();
         String newSignPassword = updateUserPasswordRequestDto.getNewSignPassword();
@@ -101,7 +98,7 @@ public class UserService {
     }
 
     public SuccessVoidResponseDto deleteUser(Long userId) {
-        UserEntity userEntity = userRepository.findByIdIfNullThrow(userId);
+        UserEntity userEntity = userRepository.findByIdThrowIfNull(userId);
         userEntity.deleteUser();
         userRepository.save(userEntity);
 

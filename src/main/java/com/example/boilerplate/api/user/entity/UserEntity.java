@@ -40,9 +40,7 @@ public class UserEntity extends BaseEntity {
 
     private UserRole userRole = UserRole.USER;
 
-    // cascade: 영속성 전이. UserEntity 를 저장하기 전에 RefreshTokenEntity 를 먼저 저장하는 옵션
-    // mappedBy: refreshTokenEntities 는 userEntity 필드와 매핑됨
-    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RefreshTokenEntity> refreshTokenEntities;
 
     public void addRefreshTokenEntity(RefreshTokenEntity refreshTokenEntity) {
@@ -51,16 +49,7 @@ public class UserEntity extends BaseEntity {
     }
 
     public void removeRefreshTokenEntity(String refreshToken) {
-        refreshTokenEntities = refreshTokenEntities.stream()
-                .filter((refreshTokenEntity) -> !refreshToken.equals(refreshTokenEntity.getRefreshToken()))
-                .collect(Collectors.toList());
-    }
-
-    public RefreshTokenEntity findRefreshTokenEntity(String refreshToken){
-        return refreshTokenEntities.stream()
-                .filter((refreshTokenEntity) -> refreshToken.equals(refreshTokenEntity.getRefreshToken()))
-                .findFirst()
-                .get();
+        refreshTokenEntities.removeIf((entity) -> refreshToken.equals(entity.getRefreshToken()));
     }
 
     public void applyBlacklist() {
