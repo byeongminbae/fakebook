@@ -27,5 +27,4 @@ API 패키지에 있는 예제들은 필요에 따라 삭제하셔도 됩니다.
 6. 특정 API 에 종속적인 예외는 ExceptionType 구현하여 해당 API 패키지 아래에 선언한다.
 7. 모든 API 응답은 SuccessResponseDto 통해 응답하여야 한다.
 8. 모든 엔티티는 BaseEntity 를 상속 받아야 한다.
-9. 애플리케이션 전반에 공통적으로 사용되는 예외는 CommonException 에 정의하되, 커스텀 예외가 필요한 경우 api 패키지 아래에 ExceptionType 을 상속받아 선언한다.
-
+9. 애플리케이션에서 발생하는 모든 예외는 CommonException 에서 관리한다.
