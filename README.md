@@ -13,56 +13,9 @@ Spring Boot를 활용한 REST API 개발에 대한 저의 생각을 보일러 �
 
 API 패키지에 있는 예제들은 필요에 따라 삭제하셔도 됩니다.
 
-### Endpoints
-
 - Swagger: http://127.0.0.1:8080/swagger-ui/index.html
 - Health Check: http://127.0.0.1:8080/actuator/health
-
-## Q&A
-
-### @Auth 어노테이션에 대해 더 설명해주세요
-
-```java
-@Auth(userRoles = {UserRole.ADMIN, UserRole.USER}, pathVariableUserId = "userId")
-    @Operation(summary = "Get user", security = @SecurityRequirement(name = "Authorization"))
-    @GetMapping("/{userId}")
-    public SuccessResponseDto<GetUserResponseDto> getUser(@PathVariable Long userId) {}
-```
-
-@Auth 이 붙어있는 컨트롤러에 토큰과 함께 요청이 왔다고 가정해봅시다.
-이는 3가지 과정을 거쳐 요청을 받아들일지 예외를 던질지 판단합니다.
-
-1. 요청에 담겨있는 토큰을 가져와 디코딩합니다. 물론, 만료되었거나 유효하지 않다면 예외가 발생합니다.
-2. 토큰 내의 userRole 이 @Auth 에 나열된 userRoles 에 포함되는지 체크합니다.
-3. 요청에 적힌 userId 와 토큰에 적힌 유저 아이디가 동일한지 체크합니다. 요청에 적힌 유저아이디를 식별할 수 있는 이유는 pathVariableUserId 에 필드명을 명시하였기 때문에 가능합니다.
-
-pathVariableUserId = "userId" , @GetMapping("/{userId}"), @PathVariable Long userId
-
-이 세가지에 들어가는 “userId” 라는 문자열은 동일해야 합니다. 가령 imUserId 라고 쓰고 싶다면 아래와 같이 하면 됩니다.
-
-```java
-@Auth(userRoles = {UserRole.ADMIN, UserRole.USER}, pathVariableUserId = "imUserId")
-    @Operation(summary = "Get user", security = @SecurityRequirement(name = "Authorization"))
-    @GetMapping("/{imUserId}")
-    public SuccessResponseDto<GetUserResponseDto> getUser(@PathVariable Long imUserId) {}
-```
-
-만약, userId 체크 기능이 필요하지 않다면 아래와 같이 비활성화 할 수 있습니다.
-
-```java
-@Auth(userRoles = {UserRole.ADMIN, UserRole.USER})
-```
-
-### API 를 사용할 수 없어요
-
-API 를 사용하려면 다음 절차를 따라야 합니다.
-
-1. 스프링 부트 실행
-2. http://127.0.0.1:8080/swagger-ui/index.html 접속
-3. POST /users 에서 유저를 생성
-4. POST /token 에 위에서 생성한 유저 아이디를 넣고 토큰(AccessToken, RefreshToken) 발급
-5. Swagger 최상단 오른쪽의 자물쇠 버튼(**Authorize**) 을 눌러 생성된 AccessToken 복사 붙여넣기
-
+- H2 Console: http://127.0.0.1:8080/h2-console
 
 ## Convention
 
