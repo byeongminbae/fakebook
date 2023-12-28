@@ -2,6 +2,9 @@
 
 I wrote this in Korean as I'm currently short on time. If I have the time later, I'll rewrite it in English.
 
+<img width="1278" alt="image" src="https://github.com/andrewbae/spring-boot-boilerplate/assets/40394063/bfd1e61c-8323-4ac4-bf1e-c5dc66cd86dd">
+
+
 ## Getting Started
 
 Spring Boot를 활용한 REST API 개발에 대한 저의 생각을 보일러 플레이트화 하여 공유하는 레포지토리 입니다.
