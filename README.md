@@ -7,8 +7,6 @@ I wrote this in Korean as I'm currently short on time. If I have the time later,
 
 ## Getting Started
 
-Spring Boot를 활용한 REST API 개발에 대한 저의 생각을 보일러 플레이트화 하여 공유하는 레포지토리 입니다.
-
 시작하기 전에는 OpenJDK 17이 설치되어 있어야 합니다.
 
 API 패키지에 있는 예제들은 필요에 따라 삭제하셔도 됩니다.
