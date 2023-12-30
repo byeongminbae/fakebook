@@ -1,15 +1,10 @@
-# Spring Boot Boilerplate(Work In Progress)
+# Fakebook(Working in progress)
 
 I wrote this in Korean as I'm currently short on time. If I have the time later, I'll rewrite it in English.
 
-<img width="1278" alt="image" src="https://github.com/andrewbae/spring-boot-boilerplate/assets/40394063/bfd1e61c-8323-4ac4-bf1e-c5dc66cd86dd">
-
-
 ## Getting Started
 
-시작하기 전에는 OpenJDK 17이 설치되어 있어야 합니다.
-
-API 패키지에 있는 예제들은 필요에 따라 삭제하셔도 됩니다.
+시작하기 전, OpenJDK 17이 설치되어 있어야 합니다.
 
 - Swagger: http://127.0.0.1:8080/swagger-ui/index.html
 - Health Check: http://127.0.0.1:8080/actuator/health
