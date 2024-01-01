@@ -192,5 +192,4 @@ Media {
 3. 네이밍은 명확하다면 길어도 문제 없다.
 4. Internal DTO는 클라이언트에게 전송하기 전에 Response DTO로 변환되어야 한다.
 5. 테스트 코드는 Given, When, Then 컨벤션으로 성공, 실패 케이스를 작성한다.
-6. 모든 API 응답은 SuccessResponseDto 통해 응답하여야 한다.
 7. 모든 엔티티는 BaseEntity 를 상속 받아야 한다.
