@@ -41,9 +41,9 @@ I wrote this in Korean as I'm currently short on time. If I have the time later,
     - GET /channels: 채널 목록 조회
     - POST /channels: 채널 생성
     - DELETE /channels/{channelId}: 채널 삭제
-    - POST /channels/{channelId}/chat: 이전 채팅 불러오기
+    - GET /channels/{channelId}/chat: 이전 채팅 불러오기 
     - POST /channels/{channelId}/members/{memberId}: 채널 참여
-    - POST /channels/{channelId}/members/{memberId}: 채널 나가기
+    - DELETE /channels/{channelId}/members/{memberId}: 채널 나가기
 - Feed
     - GET /feeds: 모든 피드 가져오기
     - GET  /feeds/{feedId}: 피드 가져오기
