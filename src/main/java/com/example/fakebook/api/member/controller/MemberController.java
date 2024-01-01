@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Member Controller", description = "Member Controller")
 @RestController
-@RequestMapping("/member")
+@RequestMapping("/members")
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
@@ -79,5 +79,23 @@ public class MemberController {
     @DeleteMapping("/{memberId}")
     public SuccessVoidResponseDto deleteMember(@PathVariable Long memberId) {
         return memberService.deleteMember(memberId);
+    }
+
+    @Operation(summary = "")
+    @GetMapping("/{memberId}/friends")
+    public SuccessVoidResponseDto getFriends(){
+        return null;
+    }
+
+    @Operation(summary = "")
+    @PostMapping("/{memberId}/friends")
+    public SuccessVoidResponseDto addFriend(){
+        return null;
+    }
+
+    @Operation(summary = "")
+    @DeleteMapping("/{memberId}/friends")
+    public SuccessVoidResponseDto deleteFriend(){
+        return null;
     }
 }
