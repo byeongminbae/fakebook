@@ -41,7 +41,7 @@ I wrote this in Korean as I'm currently short on time. If I have the time later,
     - GET /channels: 채널 목록 조회
     - POST /channels: 채널 생성
     - DELETE /channels/{channelId}: 채널 삭제
-    - POST /channesl/{channelId}/chat: 이전 채팅 불러오기
+    - POST /channels/{channelId}/chat: 이전 채팅 불러오기
     - POST /channels/{channelId}/members/{memberId}: 채널 참여
     - POST /channels/{channelId}/members/{memberId}: 채널 나가기
 - Feed
@@ -206,17 +206,17 @@ Media {
 
 - GET /channels/{channelId}/chat
     1. 일단은 페이지네이션 적용하지 말고 구현
-    2. userId 등록 체크후 채팅방의 모든 메시지 불러오기
+    2. memberId 등록 체크후 채팅방의 모든 메시지 불러오기
     3. send_message 할때 다른사람에게 전송되는 DTO 랑 동일
-- POST /channels/{channelId}/users/{userId}
+- POST /channels/{channelId}/members/{memberId}
     1. 해시맵 구독자 리스트에 등록한다.
     2. DB 참여자 리스트에 등록한다.
-- DELETE /channels/{channelId}/users/{userId}
+- DELETE /channels/{channelId}/members/{memberId}
     1. 해시맵 구독자 리스트에서 제거
     2. DB 참여자 리스트에서 제거
 - websocket /chat
     1. 채널 아이디, 메시지 전송
-    2. 세션에 담긴 엑세스토큰에 있는 userId 가 DB 참여자 리스트에 등록되어 있는지 체크
+    2. 세션에 담긴 엑세스토큰에 있는 memberId 가 DB 참여자 리스트에 등록되어 있는지 체크
     3. DB 에 메시지 남기기
     4. 해시맵 구독자 리스트 foreach 돌면서 메시지 전달(본인 제외)
 
