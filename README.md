@@ -27,6 +27,41 @@ I wrote this in Korean as I'm currently short on time. If I have the time later,
     - Base 에 deletedAt 추가. 모든 삭제는 논리삭제로 변경
     - 아이디 기반으로 조회하지만 논리삭제는 제외하고 가져오는 메서드 인터페이스에 정의
 
+### Endpoints
+
+- Member
+    - GET /members/{memberId} : 멤버 조회
+    - POST /members/{memberId}: 멤버 생성
+    - DELETE /members/{memberId}: 멤버 삭제
+    - PATCH /members/{memberId}: 멤버 정보 업데이트
+    - PUT /members/{memberId}/password: 멤버 패스워드 업데이트
+    - GET /members/{memberId}/friends: 친구 리스트
+    - POST /members/{memberId}/friends: 친구 요청
+- Chat
+    - GET /channels: 채널 목록 조회
+    - POST /channels: 채널 생성
+    - DELETE /channels/{channelId}: 채널 삭제
+    - POST /channesl/{channelId}/chat: 이전 채팅 불러오기
+    - POST /channels/{channelId}/members/{memberId}: 채널 참여
+    - POST /channels/{channelId}/members/{memberId}: 채널 나가기
+- Feed
+    - GET /feeds: 모든 피드 가져오기
+    - GET  /feeds/{feedId}: 피드 가져오기
+    - POST /feeds/{feedId}: 피드 생성
+    - PATCH /feeds/{feedId}: 피드 수정
+    - DELETE /feeds/{feedId}: 피드 삭제
+    - POST /feeds/{feedId}/reaction: 피드 리엑션 추가
+    - POST /feeds/{feedId}/media: 피드 미디어(이미지, 동영상) 추가
+    - DELETE /feeds/{feedId}/reaction: 피드 리엑션 삭제
+    - GET /feeds/{feedId}/comments: 댓글 전체 조회
+    - GET /feeds/{feedId}/comments/{commentId}: 댓글 조회
+    - POST /feeds/{feedId}/comments/{commentId}/media: 댓글 미디어(이미지, 동영상) 추가
+    - POST /feeds/{feedId}/comments: 댓글 추가
+    - DELETE /feeds/{feedId}/comments: 댓글 삭제
+    - POST /feeds/{feedId}/comments/{commentId}/reaction: 피드 리엑션 추가
+- Media
+    - POST /media: 이미지 동영상 업로드. 업로드 후 나온 Id 사용
+
 ### ERD
 
 ```mermaid
