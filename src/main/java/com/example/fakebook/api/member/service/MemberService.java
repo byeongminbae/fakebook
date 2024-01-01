@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -49,7 +50,7 @@ public class MemberService {
     }
 
     public SuccessResponseDto<GetMemberInfoResponseDto> getMember(Long memberId, String authorizationHeader) {
-        Member opponent = memberRepository.findByIdThrowIfNull(memberId);
+        Member opponent = memberRepository.findByIdAndDeletedAtIsNullThrowIfNull(memberId);
 
         if (!Objects.isNull(authorizationHeader)) {
             Member requester = memberUtil.getOwnerByAccessToken(authorizationHeader);
@@ -65,7 +66,7 @@ public class MemberService {
             Long memberId,
             UpdateMemberRequestDto updateMemberRequestDto
     ) {
-        Member member = memberRepository.findByIdThrowIfNull(memberId);
+        Member member = memberRepository.findByIdAndDeletedAtIsNullThrowIfNull(memberId);
 
         member.setEmail(Objects.isNull(updateMemberRequestDto.getEmail()) ?
                 member.getEmail() : updateMemberRequestDto.getEmail());
@@ -82,7 +83,7 @@ public class MemberService {
             Long memberId,
             UpdateMemberPasswordRequestDto updateMemberPasswordRequestDto
     ) {
-        Member member = memberRepository.findByIdThrowIfNull(memberId);
+        Member member = memberRepository.findByIdAndDeletedAtIsNullThrowIfNull(memberId);
 
         String oldSignPassword = updateMemberPasswordRequestDto.getOldSignPassword();
         String newSignPassword = updateMemberPasswordRequestDto.getNewSignPassword();
@@ -98,7 +99,7 @@ public class MemberService {
     }
 
     public SuccessVoidResponseDto deleteMember(Long memberId) {
-        Member member = memberRepository.findByIdThrowIfNull(memberId);
+        Member member = memberRepository.findByIdAndDeletedAtIsNullThrowIfNull(memberId);
         member.delete();
         memberRepository.save(member);
 

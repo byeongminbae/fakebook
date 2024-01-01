@@ -29,11 +29,11 @@ public class AuthService {
     public SuccessResponseDto<TokenResponseDto> tokenSignIn(TokenSignInRequestDto tokenSignInRequestDto) {
         String encryptedSignPassword = CryptoUtil.encryptSha512(tokenSignInRequestDto.getSignPassword());
 
-        Member member = memberRepository.findBySignIdAndSignPasswordAndIsDeletedThrowIfNull(
+        Member member = memberRepository.findBySignIdAndSignPasswordAndDeletedAtIsNull(
                 tokenSignInRequestDto.getSignId(),
-                encryptedSignPassword,
-                false
+                encryptedSignPassword
         );
+
         TokenInternalDto tokenInternalDto = tokenManager.createTokens(
                 member.getId(),
                 member.getRole()

@@ -4,18 +4,16 @@ import com.example.fakebook.global.auth.token.dto.internal.AccessTokenInternalDt
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Builder
 public class AccessTokenResponseDto {
     private final String token;
-    private final LocalDateTime expiredAt;
+    private final String expiredAt;
 
     public static AccessTokenResponseDto from(AccessTokenInternalDto accessTokenInternalDto) {
         return AccessTokenResponseDto.builder()
                 .token(accessTokenInternalDto.getToken())
-                .expiredAt(accessTokenInternalDto.getExpiredAt())
+                .expiredAt(accessTokenInternalDto.getExpiredAt().toString())
                 .build();
     }
 }

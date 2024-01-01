@@ -11,7 +11,6 @@ import java.util.List;
 @Repository
 public interface RefreshTokenRepository extends BaseRepository<RefreshToken, Long> {
     List<RefreshToken> findByTokenAndMemberId(String token, Long memberId);
-
     default List<RefreshToken> findByTokenAndMemberIdThrowIfNull(String refreshToken, Long memberId) {
         List<RefreshToken> refreshTokenEntities = findByTokenAndMemberId(refreshToken, memberId);
         if (refreshTokenEntities.isEmpty())

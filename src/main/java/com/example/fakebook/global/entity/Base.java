@@ -7,6 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @EntityListeners(AuditingEntityListener.class)
@@ -19,4 +20,9 @@ public abstract class Base {
     private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime updatedAt;
+    private LocalDateTime deletedAt;
+
+    public void delete(){
+        deletedAt = LocalDateTime.now();
+    }
 }

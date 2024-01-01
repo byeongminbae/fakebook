@@ -20,7 +20,6 @@ import java.util.List;
         @Index(name = "index_sign_id_and_sign_password", columnList = "signId, signPassword"),
         @Index(name = "index_email", columnList = "email"),
         @Index(name = "index_phone_number", columnList = "phoneNumber"),
-        @Index(name = "index_is_blacklisted", columnList = "isBlacklisted")
 })
 public class Member extends Base {
     private String signId;
@@ -30,11 +29,7 @@ public class Member extends Base {
     private String email;
     private String phoneNumber;
 
-    private Boolean isBlacklisted = false;
     private LocalDateTime blacklistedAt;
-
-    private Boolean isDeleted = false;
-    private LocalDateTime deletedAt;
 
     private Role role = Role.USER;
 
@@ -51,18 +46,11 @@ public class Member extends Base {
     }
 
     public void applyBlacklist() {
-        isBlacklisted = true;
         blacklistedAt = LocalDateTime.now();
     }
 
     public void revokeBlacklist() {
-        isBlacklisted = false;
         blacklistedAt = null;
-    }
-
-    public void delete() {
-        isDeleted = true;
-        deletedAt = LocalDateTime.now();
     }
 
     public void updateLastSignInAt() {

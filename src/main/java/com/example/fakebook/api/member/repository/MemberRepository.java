@@ -7,17 +7,11 @@ import com.example.fakebook.global.repository.BaseRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 public interface MemberRepository extends BaseRepository<Member, Long> {
-    Member findBySignIdAndSignPasswordAndIsDeleted(String signId, String signPassword, boolean isDeleted);
+    Member findBySignIdAndSignPasswordAndDeletedAtIsNull(String signId, String signPassword);
 
     Member findBySignId(String signId);
-
-    default Member findBySignIdAndSignPasswordAndIsDeletedThrowIfNull(String signId, String signPassword, boolean isDeleted) {
-        Member member = findBySignIdAndSignPasswordAndIsDeleted(signId, signPassword, isDeleted);
-        if (Objects.isNull(member))
-            throw new BusinessException(CommonException.DB_NOT_FOUND_EXCEPTION);
-        return member;
-    }
 }
