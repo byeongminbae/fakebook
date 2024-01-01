@@ -6,9 +6,9 @@ import com.example.fakebook.api.auth.dto.request.TokenSignOutRequestDto;
 import com.example.fakebook.api.auth.dto.response.AccessTokenResponseDto;
 import com.example.fakebook.api.auth.dto.response.RefreshTokenResponseDto;
 import com.example.fakebook.api.auth.dto.response.TokenResponseDto;
-import com.example.fakebook.api.user.entity.UserEntity;
-import com.example.fakebook.api.user.repository.UserRepository;
-import com.example.fakebook.api.user.util.UserUtil;
+import com.example.fakebook.api.member.entity.Member;
+import com.example.fakebook.api.member.repository.MemberRepository;
+import com.example.fakebook.api.member.util.MemberUtil;
 import com.example.fakebook.global.auth.token.TokenManager;
 import com.example.fakebook.global.auth.token.dto.internal.TokenInternalDto;
 import com.example.fakebook.global.dto.response.SuccessResponseDto;
@@ -22,55 +22,55 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final TokenManager tokenManager;
-    private final UserUtil userUtil;
+    private final MemberUtil memberUtil;
 
     public SuccessResponseDto<TokenResponseDto> tokenSignIn(TokenSignInRequestDto tokenSignInRequestDto) {
         String encryptedSignPassword = CryptoUtil.encryptSha512(tokenSignInRequestDto.getSignPassword());
 
-        UserEntity userEntity = userRepository.findBySignIdAndSignPasswordAndIsDeletedThrowIfNull(
+        Member member = memberRepository.findBySignIdAndSignPasswordAndIsDeletedThrowIfNull(
                 tokenSignInRequestDto.getSignId(),
                 encryptedSignPassword,
                 false
         );
         TokenInternalDto tokenInternalDto = tokenManager.createTokens(
-                userEntity.getId(),
-                userEntity.getUserRole()
+                member.getId(),
+                member.getRole()
         );
 
-        userEntity.addRefreshTokenEntity(tokenInternalDto.getRefreshTokenInternalDto().to());
-        userEntity.updateLastSignInAt();
+        member.addRefreshToken(tokenInternalDto.getRefreshTokenInternalDto().to());
+        member.updateLastSignInAt();
 
-        userRepository.save(userEntity);
+        memberRepository.save(member);
 
         return new SuccessResponseDto<>(TokenResponseDto.from(tokenInternalDto));
     }
 
     public SuccessVoidResponseDto tokenSignOut(TokenSignOutRequestDto tokenSignOutRequestDto) {
-        UserEntity userEntity = userUtil.getOwnerByRefreshToken(tokenSignOutRequestDto.getRefreshToken());
+        Member member = memberUtil.getOwnerByRefreshToken(tokenSignOutRequestDto.getRefreshToken());
 
-        userEntity.removeRefreshTokenEntity(tokenSignOutRequestDto.getRefreshToken());
-        userRepository.save(userEntity);
+        member.removeRefreshToken(tokenSignOutRequestDto.getRefreshToken());
+        memberRepository.save(member);
 
         return new SuccessVoidResponseDto();
     }
 
     public SuccessResponseDto<AccessTokenResponseDto> tokenRenew(TokenRenewRequestDto tokenRenewRequestDto) {
-        UserEntity userEntity = userUtil.getOwnerByRefreshToken(tokenRenewRequestDto.getRefreshToken());
+        Member member = memberUtil.getOwnerByRefreshToken(tokenRenewRequestDto.getRefreshToken());
 
         TokenInternalDto tokenInternalDto = tokenManager.createTokens(
-                userEntity.getId(),
-                userEntity.getUserRole()
+                member.getId(),
+                member.getRole()
         );
 
         return new SuccessResponseDto<>(AccessTokenResponseDto.from(tokenInternalDto.getAccessTokenInternalDto()));
     }
 
     public SuccessResponseDto<List<RefreshTokenResponseDto>> getRefreshTokenList(String authorizationHeader) {
-        UserEntity userEntity = userUtil.getOwnerByAccessToken(authorizationHeader);
+        Member member = memberUtil.getOwnerByAccessToken(authorizationHeader);
 
-        List<RefreshTokenResponseDto> refreshTokenResponseDtos = userEntity.getRefreshTokenEntities().stream()
+        List<RefreshTokenResponseDto> refreshTokenResponseDtos = member.getRefreshTokens().stream()
                 .map(RefreshTokenResponseDto::from)
                 .toList();
 

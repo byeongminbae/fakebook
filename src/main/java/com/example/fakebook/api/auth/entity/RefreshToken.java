@@ -1,7 +1,7 @@
 package com.example.fakebook.api.auth.entity;
 
-import com.example.fakebook.api.user.entity.UserEntity;
-import com.example.fakebook.global.entity.BaseEntity;
+import com.example.fakebook.api.member.entity.Member;
+import com.example.fakebook.global.entity.Base;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
@@ -14,10 +14,10 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @NoArgsConstructor
-public class RefreshTokenEntity extends BaseEntity {
-    private String refreshToken;
+public class RefreshToken extends Base {
+    private String token;
     private LocalDateTime expiredAt;
 
     @ManyToOne
-    private UserEntity userEntity;
+    private Member member;
 }

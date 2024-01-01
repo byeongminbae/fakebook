@@ -1,7 +1,7 @@
-package com.example.fakebook.websocket.chat.config;
+package com.example.fakebook.api.chat.config;
 
 
-import com.example.fakebook.websocket.chat.handler.ChatWebSocketHandler;
+import com.example.fakebook.api.chat.handler.ChatWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;

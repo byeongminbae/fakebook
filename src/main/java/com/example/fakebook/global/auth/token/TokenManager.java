@@ -8,7 +8,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.fakebook.global.auth.token.dto.internal.*;
-import com.example.fakebook.global.entity.UserRole;
+import com.example.fakebook.global.enums.Role;
 import com.example.fakebook.global.enums.TokenType;
 import com.example.fakebook.global.exception.BusinessException;
 import com.example.fakebook.global.exception.CommonException;
@@ -53,10 +53,10 @@ public class TokenManager {
         }
     }
 
-    private AccessTokenInternalDto createAccessToken(Long userId, UserRole userRole) {
+    private AccessTokenInternalDto createAccessToken(Long memberId, Role role) {
         AccessTokenPayloadInternalDto accessTokenPayloadInternalDto = AccessTokenPayloadInternalDto.builder()
-                .userId(userId)
-                .userRole(userRole)
+                .memberId(memberId)
+                .role(role)
                 .tokenType(TokenType.ACCESS)
                 .build();
 
@@ -68,9 +68,9 @@ public class TokenManager {
                 .build();
     }
 
-    private RefreshTokenInternalDto createRefreshToken(Long userId) {
+    private RefreshTokenInternalDto createRefreshToken(Long memberId) {
         RefreshTokenPayloadInternalDto refreshTokenPayloadInternalDto = RefreshTokenPayloadInternalDto.builder()
-                .userId(userId)
+                .memberId(memberId)
                 .tokenType(TokenType.REFRESH)
                 .build();
 
@@ -82,10 +82,10 @@ public class TokenManager {
                 .build();
     }
 
-    public TokenInternalDto createTokens(Long userId, UserRole userRole) {
+    public TokenInternalDto createTokens(Long memberId, Role role) {
         return TokenInternalDto.builder()
-                .accessTokenInternalDto(createAccessToken(userId, userRole))
-                .refreshTokenInternalDto(createRefreshToken(userId))
+                .accessTokenInternalDto(createAccessToken(memberId, role))
+                .refreshTokenInternalDto(createRefreshToken(memberId))
                 .build();
     }
 

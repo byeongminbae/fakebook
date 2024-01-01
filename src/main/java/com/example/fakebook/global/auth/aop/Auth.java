@@ -1,6 +1,6 @@
 package com.example.fakebook.global.auth.aop;
 
-import com.example.fakebook.global.entity.UserRole;
+import com.example.fakebook.global.enums.Role;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,7 +10,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Auth {
-    UserRole[] userRoles();
-
-    String pathVariableUserId() default "";
+    Role[] memberId();
+    String pathVariableMemberIdFieldName() default "";
 }

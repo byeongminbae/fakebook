@@ -1,4 +1,4 @@
-package com.example.fakebook.websocket.chat.handler;
+package com.example.fakebook.api.chat.handler;
 
 import com.example.fakebook.global.exception.BusinessException;
 import com.example.fakebook.global.exception.CommonException;
@@ -26,7 +26,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
                 .build();
 
         String channelId = uriComponents.getQueryParams().getFirst("channelId");
-        if (Objects.isNull(channelId)) throw new BusinessException(CommonException.CHAT_CHANNEL_ID_NOT_FOUND_EXCEPTION);
+        if (Objects.isNull(channelId)) throw new BusinessException(CommonException.WEBSOCKET_NOT_FOUND_EXCEPTION);
 
         return Long.valueOf(channelId);
     }

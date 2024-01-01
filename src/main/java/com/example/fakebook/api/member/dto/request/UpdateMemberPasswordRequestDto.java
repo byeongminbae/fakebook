@@ -1,8 +1,8 @@
-package com.example.fakebook.api.user.dto.request;
+package com.example.fakebook.api.member.dto.request;
 
 import com.example.fakebook.global.util.CryptoUtil;
 
-public class UpdateUserPasswordRequestDto {
+public class UpdateMemberPasswordRequestDto {
     private String oldSignPassword;
     private String newSignPassword;
     private String confirmSignPassword;

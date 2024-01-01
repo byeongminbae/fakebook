@@ -2,7 +2,7 @@ package com.example.fakebook.global.auth.aop;
 
 import com.example.fakebook.global.auth.token.TokenManager;
 import com.example.fakebook.global.auth.token.dto.internal.AccessTokenPayloadInternalDto;
-import com.example.fakebook.global.entity.UserRole;
+import com.example.fakebook.global.enums.Role;
 import com.example.fakebook.global.exception.BusinessException;
 import com.example.fakebook.global.exception.CommonException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,20 +47,20 @@ public class AuthAspect {
         return signature.getMethod().getAnnotation(Auth.class);
     }
 
-    private void validateUserRole(Set<UserRole> userRoles, UserRole userRole) {
-        if (!userRoles.contains(userRole))
+    private void validateRole(Set<Role> roles, Role role) {
+        if (!roles.contains(role))
             throw new BusinessException(CommonException.TOKEN_UNAUTHORIZED_EXCEPTION);
     }
 
     @SuppressWarnings(value = "unchecked")
-    private void validateUserId(String userIdFieldName, Long tokenUserId) {
-        if (!userIdFieldName.isEmpty()) {
+    private void validateMemberId(String pathVariableMemberIdFieldName, Long tokenMemberId) {
+        if (!pathVariableMemberIdFieldName.isEmpty()) {
             Map<String, String> pathVariables = (Map<String, String>) getHttpServletRequest()
                     .getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 
-            Long parsedUserId = Long.parseLong(pathVariables.get(userIdFieldName));
+            Long pathVariableMemberId = Long.parseLong(pathVariables.get(pathVariableMemberIdFieldName));
 
-            if (!parsedUserId.equals(tokenUserId))
+            if (!pathVariableMemberId.equals(tokenMemberId))
                 throw new BusinessException(CommonException.TOKEN_UNAUTHORIZED_EXCEPTION);
         }
     }
@@ -73,10 +73,10 @@ public class AuthAspect {
 
         Auth authAnnotation = getAuthAnnotation(joinPoint);
 
-        Set<UserRole> userRole = Set.of(authAnnotation.userRoles());
-        String userIdFieldName = authAnnotation.pathVariableUserId();
+        Set<Role> role = Set.of(authAnnotation.memberId());
+        String pathVariableMemberIdFieldName = authAnnotation.pathVariableMemberIdFieldName();
 
-        validateUserRole(userRole, payload.getUserRole());
-        validateUserId(userIdFieldName, payload.getUserId());
+        validateRole(role, payload.getRole());
+        validateMemberId(pathVariableMemberIdFieldName, payload.getMemberId());
     }
 }

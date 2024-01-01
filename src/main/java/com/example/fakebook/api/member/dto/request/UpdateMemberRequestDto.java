@@ -1,9 +1,9 @@
-package com.example.fakebook.api.user.dto.request;
+package com.example.fakebook.api.member.dto.request;
 
 import lombok.Getter;
 
 @Getter
-public class UpdateUserRequestDto {
+public class UpdateMemberRequestDto {
     private String email;
     private String phoneNumber;
 }

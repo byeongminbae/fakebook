@@ -1,6 +1,6 @@
 package com.example.fakebook.global.auth.token.dto.internal;
 
-import com.example.fakebook.api.auth.entity.RefreshTokenEntity;
+import com.example.fakebook.api.auth.entity.RefreshToken;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,10 +12,10 @@ public class RefreshTokenInternalDto {
     private final String token;
     private final LocalDateTime expiredAt;
 
-    public RefreshTokenEntity to() {
-        RefreshTokenEntity refreshTokenEntity = new RefreshTokenEntity();
-        refreshTokenEntity.setRefreshToken(token);
-        refreshTokenEntity.setExpiredAt(expiredAt);
-        return refreshTokenEntity;
+    public RefreshToken to() {
+        RefreshToken refreshToken = new RefreshToken();
+        refreshToken.setToken(token);
+        refreshToken.setExpiredAt(expiredAt);
+        return refreshToken;
     }
 }

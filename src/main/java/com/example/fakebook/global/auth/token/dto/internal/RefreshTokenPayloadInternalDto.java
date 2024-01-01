@@ -11,7 +11,7 @@ import java.util.Map;
 public class RefreshTokenPayloadInternalDto extends TokenPayloadInternalDto {
     public Map<String, String> toMap() {
         Map<String, String> map = new HashMap<>();
-        map.put("userId", this.getUserId().toString());
+        map.put("memberId", this.getMemberId().toString());
         map.put("tokenType", this.getTokenType().name());
         return map;
     }

@@ -1,8 +1,8 @@
-package com.example.fakebook.api.user.entity;
+package com.example.fakebook.api.member.entity;
 
-import com.example.fakebook.api.auth.entity.RefreshTokenEntity;
-import com.example.fakebook.global.entity.BaseEntity;
-import com.example.fakebook.global.entity.UserRole;
+import com.example.fakebook.api.auth.entity.RefreshToken;
+import com.example.fakebook.global.entity.Base;
+import com.example.fakebook.global.enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +22,7 @@ import java.util.List;
         @Index(name = "index_phone_number", columnList = "phoneNumber"),
         @Index(name = "index_is_blacklisted", columnList = "isBlacklisted")
 })
-public class UserEntity extends BaseEntity {
+public class Member extends Base {
     private String signId;
     private String signPassword;
     private LocalDateTime lastSignInAt = LocalDateTime.now();
@@ -36,18 +36,18 @@ public class UserEntity extends BaseEntity {
     private Boolean isDeleted = false;
     private LocalDateTime deletedAt;
 
-    private UserRole userRole = UserRole.USER;
+    private Role role = Role.USER;
 
-    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RefreshTokenEntity> refreshTokenEntities;
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RefreshToken> refreshTokens;
 
-    public void addRefreshTokenEntity(RefreshTokenEntity refreshTokenEntity) {
-        refreshTokenEntities.add(refreshTokenEntity);
-        refreshTokenEntity.setUserEntity(this);
+    public void addRefreshToken(RefreshToken refreshToken) {
+        refreshTokens.add(refreshToken);
+        refreshToken.setMember(this);
     }
 
-    public void removeRefreshTokenEntity(String refreshToken) {
-        refreshTokenEntities.removeIf((entity) -> refreshToken.equals(entity.getRefreshToken()));
+    public void removeRefreshToken(String token) {
+        refreshTokens.removeIf((entity) -> token.equals(entity.getToken()));
     }
 
     public void applyBlacklist() {
@@ -60,7 +60,7 @@ public class UserEntity extends BaseEntity {
         blacklistedAt = null;
     }
 
-    public void deleteUser() {
+    public void delete() {
         isDeleted = true;
         deletedAt = LocalDateTime.now();
     }

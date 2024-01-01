@@ -7,6 +7,6 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 public abstract class TokenPayloadInternalDto {
-    private Long userId;
+    private Long memberId;
     private TokenType tokenType;
 }

@@ -1,6 +1,6 @@
 package com.example.fakebook.api.auth.dto.response;
 
-import com.example.fakebook.api.auth.entity.RefreshTokenEntity;
+import com.example.fakebook.api.auth.entity.RefreshToken;
 import com.example.fakebook.global.auth.token.dto.internal.RefreshTokenInternalDto;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,10 +20,10 @@ public class RefreshTokenResponseDto {
                 .build();
     }
 
-    public static RefreshTokenResponseDto from(RefreshTokenEntity refreshTokenEntity) {
+    public static RefreshTokenResponseDto from(RefreshToken entity) {
         return RefreshTokenResponseDto.builder()
-                .token(refreshTokenEntity.getRefreshToken())
-                .expiredAt(refreshTokenEntity.getExpiredAt())
+                .token(entity.getToken())
+                .expiredAt(entity.getExpiredAt())
                 .build();
     }
 }

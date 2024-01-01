@@ -4,15 +4,14 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.fakebook.global.auth.token.dto.internal.AccessTokenPayloadInternalDto;
 import com.example.fakebook.global.auth.token.dto.internal.RefreshTokenPayloadInternalDto;
 import com.example.fakebook.global.auth.token.dto.internal.TokenPayloadInternalDto;
-import com.example.fakebook.global.entity.UserRole;
 
 public enum TokenType {
     ACCESS {
         @Override
         public AccessTokenPayloadInternalDto getTokenPayloadInternalDto(DecodedJWT decodedJWT) {
             return AccessTokenPayloadInternalDto.builder()
-                    .userId(Long.parseLong(decodedJWT.getClaims().get("userId").asString()))
-                    .userRole(UserRole.valueOf(decodedJWT.getClaims().get("userRole").asString()))
+                    .memberId(Long.parseLong(decodedJWT.getClaims().get("memberId").asString()))
+                    .role(Role.valueOf(decodedJWT.getClaims().get("role").asString()))
                     .build();
         }
     },
@@ -20,7 +19,7 @@ public enum TokenType {
         @Override
         public RefreshTokenPayloadInternalDto getTokenPayloadInternalDto(DecodedJWT decodedJWT) {
             return RefreshTokenPayloadInternalDto.builder()
-                    .userId(Long.parseLong(decodedJWT.getClaims().get("userId").asString()))
+                    .memberId(Long.parseLong(decodedJWT.getClaims().get("memberId").asString()))
                     .build();
         }
     };

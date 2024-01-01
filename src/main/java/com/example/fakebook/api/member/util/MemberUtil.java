@@ -1,9 +1,9 @@
-package com.example.fakebook.api.user.util;
+package com.example.fakebook.api.member.util;
 
 
 import com.example.fakebook.api.auth.repository.RefreshTokenRepository;
-import com.example.fakebook.api.user.entity.UserEntity;
-import com.example.fakebook.api.user.repository.UserRepository;
+import com.example.fakebook.api.member.entity.Member;
+import com.example.fakebook.api.member.repository.MemberRepository;
 import com.example.fakebook.global.auth.token.TokenManager;
 import com.example.fakebook.global.auth.token.dto.internal.AccessTokenPayloadInternalDto;
 import com.example.fakebook.global.auth.token.dto.internal.RefreshTokenPayloadInternalDto;
@@ -12,23 +12,23 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UserUtil {
+public class MemberUtil {
     private final TokenManager tokenManager;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
-    public UserEntity getOwnerByRefreshToken(String refreshToken) {
+    public Member getOwnerByRefreshToken(String refreshToken) {
         RefreshTokenPayloadInternalDto refreshTokenPayloadInternalDto = tokenManager.decodeToken(refreshToken);
 
-        refreshTokenRepository.findByRefreshTokenAndUserEntityIdThrowIfNull(
+        refreshTokenRepository.findByTokenAndMemberIdThrowIfNull(
                 refreshToken,
-                refreshTokenPayloadInternalDto.getUserId()
+                refreshTokenPayloadInternalDto.getMemberId()
         );
-        return userRepository.findByIdThrowIfNull(refreshTokenPayloadInternalDto.getUserId());
+        return memberRepository.findByIdThrowIfNull(refreshTokenPayloadInternalDto.getMemberId());
     }
 
-    public UserEntity getOwnerByAccessToken(String accessToken) {
+    public Member getOwnerByAccessToken(String accessToken) {
         AccessTokenPayloadInternalDto accessTokenPayloadInternalDto = tokenManager.decodeToken(accessToken);
-        return userRepository.findByIdThrowIfNull(accessTokenPayloadInternalDto.getUserId());
+        return memberRepository.findByIdThrowIfNull(accessTokenPayloadInternalDto.getMemberId());
     }
 }

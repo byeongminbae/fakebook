@@ -1,10 +1,10 @@
 //package com.example.fakebook.global.auth;
 //
-//import com.example.fakebook.api.user.entity.UserEntity;
-//import com.example.fakebook.api.user.repository.UserRepository;
+//import com.example.fakebook.api.user.entity.Member;
+//import com.example.fakebook.api.user.repository.MemberRepository;
 //import com.example.fakebook.global.auth.token.dto.internal.TokenInternalDto;
 //import com.example.fakebook.global.auth.token.TokenManager;
-//import com.example.fakebook.global.entity.UserRole;
+//import com.example.fakebook.global.enums.Role;
 //import com.example.fakebook.global.exception.BusinessException;
 //import com.example.fakebook.global.exception.CommonException;
 //import org.assertj.core.api.Assertions;
@@ -18,14 +18,14 @@
 //    @Autowired
 //    private TokenManager tokenManager;
 //    @Autowired
-//    private UserRepository userRepository;
+//    private MemberRepository userRepository;
 //
-//    private UserEntity createUser() {
-//        UserEntity userEntity = new UserEntity();
+//    private Member createUser() {
+//        Member userEntity = new Member();
 //
 //        userEntity.setEmail("example@example.com");
 //        userEntity.setNickname("example");
-//        userEntity.setUserRole(UserRole.USER);
+//        userEntity.setRole(Role.USER);
 //        userEntity.setUserStatus(UserStatus.NORMAL);
 //
 //        return userRepository.save(userEntity);
@@ -35,8 +35,8 @@
 //    void accessTokenExpired() {
 //        // given
 //        ReflectionTestUtils.setField(tokenManager, "accessTokenExpiredOffset", 0);
-//        UserEntity userEntity = createUser();
-//        TokenInternalDto tokenInternalDto = tokenManager.createTokens(userEntity.getId(), userEntity.getUserRole());
+//        Member userEntity = createUser();
+//        TokenInternalDto tokenInternalDto = tokenManager.createTokens(userEntity.getId(), userEntity.getRole());
 //
 //        // when, then
 //        Assertions.assertThatThrownBy(() -> {
