@@ -20,12 +20,6 @@ I wrote this in Korean as I'm currently short on time. If I have the time later,
     3. 피드 CRUD, 피드 무한 스크롤(커서), 피드 대한 좋아요, 댓글
     4. 친구 관리(친구 요청, 수락, 거절 기능)
     5. 메인 페이지, 검색(유저, 피드) 최근 올라온 피드(커서)
-- Technical
-    - 예외 Common 에 뭉탱이로 두지 말고, Common, Database 이런식으로 쪼개기
-    - common 패키지에 공통으로 사용되는 클래스 묶기
-    - 클래스 이름에서 “엔티티” 단어 지우기. 유저는 멤버로 변경
-    - Base 에 deletedAt 추가. 모든 삭제는 논리삭제로 변경
-    - 아이디 기반으로 조회하지만 논리삭제는 제외하고 가져오는 메서드 인터페이스에 정의
 
 ### ERD
 
