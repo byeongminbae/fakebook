@@ -1,5 +1,9 @@
 package com.example.fakebook.api.member.service;
 
+import com.example.fakebook.api.chat.entity.Channel;
+import com.example.fakebook.api.chat.repository.ChannelRepository;
+import com.example.fakebook.api.common.dto.response.GetChannelResponseDto;
+import com.example.fakebook.api.common.dto.response.GetChatResponseDto;
 import com.example.fakebook.api.common.entity.ChannelMember;
 import com.example.fakebook.api.member.dto.request.CreateMemberRequestDto;
 import com.example.fakebook.api.member.dto.request.UpdateMemberPasswordRequestDto;
@@ -27,6 +31,7 @@ public class MemberService {
     private final TokenManager tokenManager;
     private final MemberRepository memberRepository;
     private final MemberUtil memberUtil;
+    private final ChannelRepository channelRepository;
 
 
     public SuccessResponseDto<CreateMemberResponseDto> createMember(CreateMemberRequestDto createMemberRequestDto) {
@@ -90,7 +95,7 @@ public class MemberService {
         String confirmSignPassword = updateMemberPasswordRequestDto.getConfirmSignPassword();
 
         if (!(oldSignPassword.equals(member.getSignPassword()) && newSignPassword.equals(confirmSignPassword)))
-            throw new BusinessException(CommonException.GLOBAL_INVALID_INPUT);
+            throw new BusinessException(CommonException.GLOBAL_INVALID_INPUT_EXCEPTION);
 
         member.setSignPassword(updateMemberPasswordRequestDto.getNewSignPassword());
         memberRepository.save(member);
@@ -114,5 +119,23 @@ public class MemberService {
                 .collect(Collectors.toList());
 
         return new SuccessResponseDto<>(getChannelResponseDtos);
+    }
+
+    public SuccessResponseDto<List<GetChatResponseDto>> getChats(Long memberId, Long channelId){
+        Channel channel = channelRepository.findByIdAndChannelMembersMemberIdAndDeletedAtIsNullThrowIfNull(
+                channelId,
+                memberId
+        );
+
+//        channel.getChannelMembers().stream()
+//                .filter((channelMember) -> channelMember.getMember().getId().equals(memberId))
+//                .findFirst()
+//                .orElseThrow(()-> new BusinessException(CommonException.CHAT_UNAUTHORIZED_EXCEPTION));
+
+        List<GetChatResponseDto> chatResponseDtos = channel.getChats().stream()
+                .map(GetChatResponseDto::from)
+                .collect(Collectors.toList());
+
+        return new SuccessResponseDto<>(chatResponseDtos);
     }
 }

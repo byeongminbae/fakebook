@@ -4,29 +4,30 @@ import com.example.fakebook.api.common.entity.ChannelMember;
 import com.example.fakebook.api.member.entity.Member;
 import com.example.fakebook.global.entity.Base;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Entity
+@Table(indexes = {
+        @Index(name = "index_title", columnList = "title", unique = true),
+})
 public class Channel extends Base {
     @Setter
     private String title;
     @Setter
     private String description;
-
     @Setter
     @ManyToOne
     private Member creator;
 
-    @OneToMany(mappedBy = "channel", cascade = CascadeType.PERSIST)
-    private List<ChannelMember> channelMembers = new ArrayList<>();
+    @OneToMany(mappedBy = "channel", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private final List<ChannelMember> channelMembers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "channel", cascade = CascadeType.PERSIST)
-    private List<Chat> chats = new ArrayList<>();
+    @OneToMany(mappedBy = "channel", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private final List<Chat> chats = new ArrayList<>();
 
     public void addChat(Chat chat) {
         chats.add(chat);

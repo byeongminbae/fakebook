@@ -4,7 +4,8 @@ import com.example.fakebook.api.member.dto.request.CreateMemberRequestDto;
 import com.example.fakebook.api.member.dto.request.UpdateMemberPasswordRequestDto;
 import com.example.fakebook.api.member.dto.request.UpdateMemberRequestDto;
 import com.example.fakebook.api.member.dto.response.CreateMemberResponseDto;
-import com.example.fakebook.api.member.dto.response.GetChannelResponseDto;
+import com.example.fakebook.api.common.dto.response.GetChannelResponseDto;
+import com.example.fakebook.api.common.dto.response.GetChatResponseDto;
 import com.example.fakebook.api.member.dto.response.GetMemberInfoResponseDto;
 import com.example.fakebook.api.member.service.MemberService;
 import com.example.fakebook.global.auth.aop.Auth;
@@ -110,5 +111,15 @@ public class MemberController {
     @GetMapping("/{memberId}/channels")
     public SuccessResponseDto<List<GetChannelResponseDto>> getChannels(@PathVariable Long memberId) {
         return memberService.getChannels(memberId);
+    }
+
+    @Auth(memberId = {Role.USER, Role.ADMIN}, pathVariableMemberIdFieldName = "memberId")
+    @Operation(summary = "Get all chats", security = @SecurityRequirement(name = "Authorization"))
+    @GetMapping("/{memberId}/channels/{channelId}/chats")
+    public SuccessResponseDto<List<GetChatResponseDto>> getChats(
+            @PathVariable Long memberId,
+            @PathVariable Long channelId
+    ) {
+        return memberService.getChats(memberId, channelId);
     }
 }

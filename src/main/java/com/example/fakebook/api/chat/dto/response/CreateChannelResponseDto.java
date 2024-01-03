@@ -7,11 +7,11 @@ import lombok.Getter;
 @Getter
 @Builder
 public class CreateChannelResponseDto {
-    private Long channelId;
+    private Long id;
 
     public static CreateChannelResponseDto from(Channel channel){
         return CreateChannelResponseDto.builder()
-                .channelId(channel.getId())
+                .id(channel.getId())
                 .build();
     }
 }

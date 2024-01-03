@@ -1,4 +1,4 @@
-package com.example.fakebook.api.member.dto.response;
+package com.example.fakebook.api.common.dto.response;
 
 import com.example.fakebook.api.chat.entity.Channel;
 import lombok.Builder;

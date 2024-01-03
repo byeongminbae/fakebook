@@ -6,6 +6,8 @@ import com.example.fakebook.api.chat.entity.Chat;
 import com.example.fakebook.api.common.entity.ChannelMember;
 import com.example.fakebook.global.entity.Base;
 import com.example.fakebook.global.enums.Role;
+import com.example.fakebook.global.exception.BusinessException;
+import com.example.fakebook.global.exception.CommonException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,16 +43,16 @@ public class Member extends Base {
     private Role role = Role.USER;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
-    private List<RefreshToken> refreshTokens = new ArrayList<>();
+    private final List<RefreshToken> refreshTokens = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
-    private List<ChannelMember> channelMembers = new ArrayList<>();
+    private final List<ChannelMember> channelMembers = new ArrayList<>();
 
     @OneToMany(mappedBy = "creator", cascade = CascadeType.PERSIST)
-    private List<Channel> channels = new ArrayList<>();
+    private final List<Channel> channels = new ArrayList<>();
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.PERSIST)
-    private List<Chat> chats = new ArrayList<>();
+    private final List<Chat> chats = new ArrayList<>();
 
     public void addRefreshToken(RefreshToken refreshToken) {
         refreshTokens.add(refreshToken);
@@ -67,6 +69,15 @@ public class Member extends Base {
 
     public void revokeBlacklist() {
         blacklistedAt = null;
+    }
+
+    public boolean containChannel(Channel channel){
+        for (ChannelMember channelMember : getChannelMembers()) {
+            if(channelMember.getChannel().equals(channel)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public void updateLastSignInAt() {
