@@ -27,14 +27,15 @@ erDiagram
 Member ||--o{ Friend : OneToMany
 Member ||--o{ Feed : OneToMany
 Member ||--o{ FeedComment : OneToMany
-Member ||--o{ MemberChannel :OneToMany
+Member ||--o{ ChannelMember :OneToMany
 Member ||--o{ Chat : OneToMany
 Member ||--o{ FeedCommentReaction : OneToMany
 Member ||--o{ FeedReaction : OneToMany
 Member ||--o{ Media : OneToMany
 FeedComment ||--o{ Media: OneToMany
 FeedComment ||--o{ FeedCommentReaction : OneToMany
-Channel ||--o{ MemberChannel :OneToMany
+Channel ||--o{ ChannelMember :OneToMany
+Member ||--o{ Channel :OneToMany
 Feed ||--o{ FeedComment : OneToMany 
 Feed ||--o{ FeedReaction : OneToMany
 Feed ||--o{ Media: OneToMany
@@ -83,7 +84,7 @@ FeedComment{
 	String content
 }
 
-MemberChannel{
+ChannelMember{
 	Long id PK
 	LocalDateTime createdAt
 	LocalDateTime updatedAt
@@ -97,8 +98,8 @@ Channel{
 	LocalDateTime createdAt
 	LocalDateTime updatedAt
 	LocalDateTime deletedAt
+	Member creator FK
 	String title
-	
 }
 
 Chat{
