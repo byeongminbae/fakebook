@@ -29,7 +29,7 @@ public class AuthService {
     public SuccessResponseDto<TokenResponseDto> tokenSignIn(TokenSignInRequestDto tokenSignInRequestDto) {
         String encryptedSignPassword = CryptoUtil.encryptSha512(tokenSignInRequestDto.getSignPassword());
 
-        Member member = memberRepository.findBySignIdAndSignPasswordAndDeletedAtIsNull(
+        Member member = memberRepository.findBySignIdAndSignPasswordAndDeletedAtIsNullThrowIfNull(
                 tokenSignInRequestDto.getSignId(),
                 encryptedSignPassword
         );

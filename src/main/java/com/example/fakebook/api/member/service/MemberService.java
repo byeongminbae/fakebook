@@ -1,12 +1,10 @@
 package com.example.fakebook.api.member.service;
 
+import com.example.fakebook.api.common.entity.ChannelMember;
 import com.example.fakebook.api.member.dto.request.CreateMemberRequestDto;
 import com.example.fakebook.api.member.dto.request.UpdateMemberPasswordRequestDto;
 import com.example.fakebook.api.member.dto.request.UpdateMemberRequestDto;
-import com.example.fakebook.api.member.dto.response.CreateMemberResponseDto;
-import com.example.fakebook.api.member.dto.response.GetMemberInfoResponseDto;
-import com.example.fakebook.api.member.dto.response.GetMemberPrivateInfoResponseDto;
-import com.example.fakebook.api.member.dto.response.GetMemberPublicInfoResponseDto;
+import com.example.fakebook.api.member.dto.response.*;
 import com.example.fakebook.api.member.entity.Member;
 import com.example.fakebook.api.member.repository.MemberRepository;
 import com.example.fakebook.api.member.util.MemberUtil;
@@ -19,8 +17,9 @@ import com.example.fakebook.global.util.CryptoUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -28,6 +27,7 @@ public class MemberService {
     private final TokenManager tokenManager;
     private final MemberRepository memberRepository;
     private final MemberUtil memberUtil;
+
 
     public SuccessResponseDto<CreateMemberResponseDto> createMember(CreateMemberRequestDto createMemberRequestDto) {
         Member duplicatedMember = memberRepository.findBySignId(createMemberRequestDto.getSignId());
@@ -104,5 +104,15 @@ public class MemberService {
         memberRepository.save(member);
 
         return new SuccessVoidResponseDto();
+    }
+
+    public SuccessResponseDto<List<GetChannelResponseDto>> getChannels(Long memberId){
+        Member member = memberRepository.findByIdAndDeletedAtIsNullThrowIfNull(memberId);
+        List<ChannelMember> channelMembers = member.getChannelMembers();
+        List<GetChannelResponseDto> getChannelResponseDtos = channelMembers.stream()
+                .map((channelMember)-> GetChannelResponseDto.from(channelMember.getChannel()))
+                .collect(Collectors.toList());
+
+        return new SuccessResponseDto<>(getChannelResponseDtos);
     }
 }

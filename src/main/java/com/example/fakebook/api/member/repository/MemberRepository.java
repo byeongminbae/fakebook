@@ -14,4 +14,11 @@ public interface MemberRepository extends BaseRepository<Member, Long> {
     Member findBySignIdAndSignPasswordAndDeletedAtIsNull(String signId, String signPassword);
 
     Member findBySignId(String signId);
+
+    default Member findBySignIdAndSignPasswordAndDeletedAtIsNullThrowIfNull(String signId, String signPassword){
+        Member entity = findBySignIdAndSignPasswordAndDeletedAtIsNull(signId, signPassword);
+        if (Objects.isNull(entity))
+            throw new BusinessException(CommonException.DB_NOT_FOUND_EXCEPTION);
+        return entity;
+    }
 }

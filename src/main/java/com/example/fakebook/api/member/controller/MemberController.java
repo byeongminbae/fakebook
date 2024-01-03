@@ -4,6 +4,7 @@ import com.example.fakebook.api.member.dto.request.CreateMemberRequestDto;
 import com.example.fakebook.api.member.dto.request.UpdateMemberPasswordRequestDto;
 import com.example.fakebook.api.member.dto.request.UpdateMemberRequestDto;
 import com.example.fakebook.api.member.dto.response.CreateMemberResponseDto;
+import com.example.fakebook.api.member.dto.response.GetChannelResponseDto;
 import com.example.fakebook.api.member.dto.response.GetMemberInfoResponseDto;
 import com.example.fakebook.api.member.service.MemberService;
 import com.example.fakebook.global.auth.aop.Auth;
@@ -16,6 +17,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "Member Controller", description = "Member Controller")
 @RestController
@@ -83,19 +86,29 @@ public class MemberController {
 
     @Operation(summary = "")
     @GetMapping("/{memberId}/friends")
-    public SuccessVoidResponseDto getFriends(){
+    public SuccessVoidResponseDto getFriends() {
         return null;
     }
 
     @Operation(summary = "")
     @PostMapping("/{memberId}/friends")
-    public SuccessVoidResponseDto addFriend(){
+    public SuccessVoidResponseDto addFriend() {
         return null;
     }
 
     @Operation(summary = "")
     @DeleteMapping("/{memberId}/friends")
-    public SuccessVoidResponseDto deleteFriend(){
+    public SuccessVoidResponseDto deleteFriend() {
         return null;
+    }
+
+    @Auth(memberId = {Role.USER, Role.ADMIN}, pathVariableMemberIdFieldName = "memberId")
+    @Operation(
+            summary = "Retrieve channels I'm participating in",
+            security = @SecurityRequirement(name = "Authorization")
+    )
+    @GetMapping("/{memberId}/channels")
+    public SuccessResponseDto<List<GetChannelResponseDto>> getChannels(@PathVariable Long memberId) {
+        return memberService.getChannels(memberId);
     }
 }
