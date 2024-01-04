@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class SuccessResponseDto<T> {
     private final String timestamp = LocalDateTime.now().toString();
+    private final Boolean success = true;
     private final T data;
 
     public SuccessResponseDto() {

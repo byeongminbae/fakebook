@@ -8,4 +8,5 @@ import java.time.LocalDateTime;
 @Getter
 public class SuccessVoidResponseDto {
     private final String timestamp = LocalDateTime.now().toString();
+    private final Boolean success = true;
 }
