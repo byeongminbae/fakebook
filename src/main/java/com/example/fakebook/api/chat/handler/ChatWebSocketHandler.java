@@ -64,8 +64,9 @@ public class ChatWebSocketHandler implements WebSocketHandler {
     }
 
     private Long getMemberId(WebSocketSession webSocketSession) {
-        String authorization = webSocketSession.getHandshakeHeaders().getFirst("Authorization");
-        AccessTokenPayloadInternalDto accessTokenPayloadInternalDto = tokenManager.decodeToken(authorization);
+        UriComponents uriComponents = UriComponentsBuilder.fromUriString(String.valueOf(webSocketSession.getUri())).build();
+        String accessToken = uriComponents.getQueryParams().getFirst("accessToken");
+        AccessTokenPayloadInternalDto accessTokenPayloadInternalDto = tokenManager.decodeToken(accessToken);
         return accessTokenPayloadInternalDto.getMemberId();
     }
 

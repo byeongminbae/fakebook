@@ -14,6 +14,7 @@ public class GetChannelResponseDto {
     private Long chatCount;
     private String creatorSignId;
     private String creatorEmail;
+    private String createdAt;
 
     public static GetChannelResponseDto from(Channel channel){
         return GetChannelResponseDto.builder()
@@ -24,6 +25,7 @@ public class GetChannelResponseDto {
                 .chatCount(channel.getChats().stream().count())
                 .creatorSignId(channel.getCreator().getSignId())
                 .creatorEmail(channel.getCreator().getEmail())
+                .createdAt(channel.getCreatedAt().toString())
                 .build();
     }
 }
