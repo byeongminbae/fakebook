@@ -26,7 +26,7 @@ public class AuthService {
     private final TokenManager tokenManager;
     private final MemberUtil memberUtil;
 
-    public SuccessResponseDto<TokenResponseDto> tokenSignIn(TokenSignInRequestDto tokenSignInRequestDto) {
+    public SuccessResponseDto<TokenResponseDto> signIn(TokenSignInRequestDto tokenSignInRequestDto) {
         String encryptedSignPassword = CryptoUtil.encryptSha512(tokenSignInRequestDto.getSignPassword());
 
         Member member = memberRepository.findBySignIdAndSignPasswordAndDeletedAtIsNullThrowIfNull(
@@ -47,7 +47,7 @@ public class AuthService {
         return new SuccessResponseDto<>(TokenResponseDto.from(tokenInternalDto));
     }
 
-    public SuccessVoidResponseDto tokenSignOut(TokenSignOutRequestDto tokenSignOutRequestDto) {
+    public SuccessVoidResponseDto signOut(TokenSignOutRequestDto tokenSignOutRequestDto) {
         Member member = memberUtil.getOwnerByRefreshToken(tokenSignOutRequestDto.getRefreshToken());
 
         member.removeRefreshToken(tokenSignOutRequestDto.getRefreshToken());
@@ -56,7 +56,7 @@ public class AuthService {
         return new SuccessVoidResponseDto();
     }
 
-    public SuccessResponseDto<AccessTokenResponseDto> tokenRenew(TokenRenewRequestDto tokenRenewRequestDto) {
+    public SuccessResponseDto<AccessTokenResponseDto> renew(TokenRenewRequestDto tokenRenewRequestDto) {
         Member member = memberUtil.getOwnerByRefreshToken(tokenRenewRequestDto.getRefreshToken());
 
         TokenInternalDto tokenInternalDto = tokenManager.createTokens(
@@ -67,7 +67,7 @@ public class AuthService {
         return new SuccessResponseDto<>(AccessTokenResponseDto.from(tokenInternalDto.getAccessTokenInternalDto()));
     }
 
-    public SuccessResponseDto<List<RefreshTokenResponseDto>> getRefreshTokenList(String authorizationHeader) {
+    public SuccessResponseDto<List<RefreshTokenResponseDto>> getRefreshTokens(String authorizationHeader) {
         Member member = memberUtil.getOwnerByAccessToken(authorizationHeader);
 
         List<RefreshTokenResponseDto> refreshTokenResponseDtos = member.getRefreshTokens().stream()

@@ -29,36 +29,36 @@ public class AuthController {
 
     @Operation(summary = "Sign in with token-based authentication")
     @PostMapping("/token/sign-in")
-    public SuccessResponseDto<TokenResponseDto> tokenSignIn(
+    public SuccessResponseDto<TokenResponseDto> signIn(
             @RequestBody TokenSignInRequestDto tokenSignInRequestDto
     ) {
-        return authService.tokenSignIn(tokenSignInRequestDto);
+        return authService.signIn(tokenSignInRequestDto);
     }
 
     @Auth(memberId = {Role.USER, Role.ADMIN})
     @Operation(summary = "Sign out with token-based authentication", security = @SecurityRequirement(name = "Authorization"))
     @PostMapping("/token/sign-out")
-    public SuccessVoidResponseDto tokenSignOut(
+    public SuccessVoidResponseDto signOut(
             @RequestBody TokenSignOutRequestDto tokenSignOutRequestDto
     ) {
-        return authService.tokenSignOut(tokenSignOutRequestDto);
+        return authService.signOut(tokenSignOutRequestDto);
     }
 
     @Operation(summary = "Renew access token using refresh token")
     @PostMapping("/token/renew")
-    public SuccessResponseDto<AccessTokenResponseDto> tokenRenew(
+    public SuccessResponseDto<AccessTokenResponseDto> renew(
             @RequestBody TokenRenewRequestDto tokenRenewRequestDto
     ) {
-        return authService.tokenRenew(tokenRenewRequestDto);
+        return authService.renew(tokenRenewRequestDto);
     }
 
     @Auth(memberId = {Role.USER, Role.ADMIN})
     @Operation(summary = "Get refresh token list", security = @SecurityRequirement(name = "Authorization"))
     @GetMapping("/token/refresh")
-    public SuccessResponseDto<List<RefreshTokenResponseDto>> getRefreshTokenList(
+    public SuccessResponseDto<List<RefreshTokenResponseDto>> getRefreshTokens(
             @Schema(hidden = true)
             @RequestHeader(value = "Authorization", required = false) String authorizationHeader
     ) {
-        return authService.getRefreshTokenList(authorizationHeader);
+        return authService.getRefreshTokens(authorizationHeader);
     }
 }

@@ -14,6 +14,7 @@ import com.example.fakebook.global.exception.BusinessException;
 import com.example.fakebook.global.exception.CommonException;
 import com.example.fakebook.global.util.StringUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -33,12 +34,14 @@ public class TokenManager {
     @Value("${token.refresh-token-expired-offset}")
     private long refreshTokenExpiredOffset;
 
+    private final ObjectProvider<LocalDateTime> localDateTime;
+
     private Algorithm getAlgorithm() {
         return Algorithm.HMAC256(secret);
     }
 
     private LocalDateTime getExpiredAt(long offset) {
-        return LocalDateTime.now().plus(offset, ChronoUnit.MILLIS);
+        return localDateTime.getObject().plus(offset, ChronoUnit.MILLIS);
     }
 
     private String createToken(Map<String, ?> claims, LocalDateTime expiredAt) {
