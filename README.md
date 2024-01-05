@@ -4,20 +4,35 @@ I wrote this in Korean as I'm currently short on time. If I have the time later,
 
 ## Getting Started
 
-시작하기 전, OpenJDK 17이 설치되어 있어야 합니다.
+Before getting started, OpenJDK 17 must be installed.
 
 - Swagger: http://127.0.0.1:8080/swagger-ui/index.html
 - Health Check: http://127.0.0.1:8080/actuator/health
 - H2 Console: http://127.0.0.1:8080/h2-console
 
-## Development
+## Features
+- 실시간 웹 소켓 기반 채팅
+    - 채널 목록 조회, 생성, 삭제
+    - 이전 채팅 불러오기
+    - 채널 참여, 나가기
+- 토큰 기반 인증
+    - Refresh Token 리스트 조회, 삭제
+    - Refresh Token을 통한 Access Token 갱신
+- 무한 스크롤 가능한 피드
+    - 모든 피드 가져오기, 피드 가져오기
+    - 피드 생성, 수정, 삭제
+    - 이미지, 동영상 미디어 추가
+    - 댓글 조회, 추가, 삭제
+    - 댓글에 이미지, 동영상 미디어 추가
+    - 피드, 댓글 반응(좋아요, 슬퍼요, 웃겨요, 졸려요) 추가, 삭제
+- 하나의 엔드포인트로 규격화된 미디어(이미지, 동영상) 업로드
+- 멤버
+    - 멤버 조회, 생성, 삭제, 정보 업데이트
+    - 참여한 채널 전체보기
+    - 패스워드 업데이트
+    - 친구 리스트, 추가, 삭제
 
-### ToDo
-1. 웹소켓 채팅
-2. 유저 회원가입, 로그인, 정보 수정, 비밀번호 재설정, 계정 삭제
-3. 피드 CRUD, 피드 무한 스크롤(커서), 피드 대한 좋아요, 댓글
-4. 친구 관리(친구 요청, 수락, 거절 기능)
-5. 메인 페이지, 검색(유저, 피드) 최근 올라온 피드(커서)
+## Development
 
 ### ERD
 
