@@ -44,7 +44,6 @@
 
 <script>
     $("#header").load("component/header.html");
-    checkTokens();
     $(document).ready(function () {
         $("#submit").click(function () {
             requestSignIn($("#id").val(), $("#password").val())
