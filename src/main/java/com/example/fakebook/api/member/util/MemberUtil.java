@@ -19,11 +19,7 @@ public class MemberUtil {
 
     public Member getOwnerByRefreshToken(String refreshToken) {
         RefreshTokenPayloadInternalDto refreshTokenPayloadInternalDto = tokenManager.decodeToken(refreshToken);
-
-        refreshTokenRepository.findByTokenAndMemberIdThrowIfNull(
-                refreshToken,
-                refreshTokenPayloadInternalDto.getMemberId()
-        );
+        refreshTokenRepository.findByTokenThrowIfNull(refreshToken);
         return memberRepository.findByIdThrowIfNull(refreshTokenPayloadInternalDto.getMemberId());
     }
 

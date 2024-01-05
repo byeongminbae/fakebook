@@ -44,8 +44,7 @@ public class AuthController {
         return authService.tokenSignOut(tokenSignOutRequestDto);
     }
 
-    @Auth(memberId = {Role.USER, Role.ADMIN})
-    @Operation(summary = "Renew access token using refresh token", security = @SecurityRequirement(name = "Authorization"))
+    @Operation(summary = "Renew access token using refresh token")
     @PostMapping("/token/renew")
     public SuccessResponseDto<AccessTokenResponseDto> tokenRenew(
             @RequestBody TokenRenewRequestDto tokenRenewRequestDto

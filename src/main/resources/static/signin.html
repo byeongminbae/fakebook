@@ -12,6 +12,7 @@
         crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"
         integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="/js/index.js"></script>
 </head>
 <div id="header"></div>
 
@@ -36,35 +37,21 @@
                     <input type="button" id="submit" class="btn btn-primary w-100 py-2 mt-3" value="Sign in">
                     <p class="mt-3">Not a member? <a href="signup.html">Sign up</a></p>
                 </form>
+            </main>
         </div>
     </div>
-    </main>
-
 </body>
 
 <script>
     $("#header").load("component/header.html");
-
+    checkTokens();
     $(document).ready(function () {
         $("#submit").click(function () {
-            let id = $("#id").val();
-            let password = $("#password").val();
-
-            $.ajax({
-                type: "POST",
-                url: "http://127.0.0.1:8080/auth/token/sign-in",
-                contentType: "application/json",
-                dataType: "json",
-                data: JSON.stringify({ signId: id, signPassword: password }),
-                success: function (response) {
-                    console.log("서버 응답:", response);
-                },
-                error: function (xhr, status, error) {
-                    console.error("에러:", error);
-                }
-            });
+            requestSignIn($("#id").val(), $("#password").val())
         });
     });
+
+
 </script>
 
 </html>

@@ -6,8 +6,6 @@ import com.example.fakebook.api.chat.entity.Chat;
 import com.example.fakebook.api.common.entity.ChannelMember;
 import com.example.fakebook.global.entity.Base;
 import com.example.fakebook.global.enums.Role;
-import com.example.fakebook.global.exception.BusinessException;
-import com.example.fakebook.global.exception.CommonException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,16 +40,16 @@ public class Member extends Base {
     @Setter
     private Role role = Role.USER;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private final List<RefreshToken> refreshTokens = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private final List<ChannelMember> channelMembers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "creator", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "creator", cascade =  {CascadeType.PERSIST, CascadeType.MERGE})
     private final List<Channel> channels = new ArrayList<>();
 
-    @OneToMany(mappedBy = "author", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "author", cascade =  {CascadeType.PERSIST, CascadeType.MERGE})
     private final List<Chat> chats = new ArrayList<>();
 
     public void addRefreshToken(RefreshToken refreshToken) {
@@ -71,9 +69,9 @@ public class Member extends Base {
         blacklistedAt = null;
     }
 
-    public boolean containChannel(Channel channel){
+    public boolean containChannel(Channel channel) {
         for (ChannelMember channelMember : getChannelMembers()) {
-            if(channelMember.getChannel().equals(channel)){
+            if (channelMember.getChannel().equals(channel)) {
                 return true;
             }
         }
