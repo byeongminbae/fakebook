@@ -7,6 +7,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ChannelSortField implements SortField {
-    ID("id"), CREATED_AT("createdAt"), DE("description");
+    ID("id"), CREATED_AT("createdAt");
     private final String name;
 }

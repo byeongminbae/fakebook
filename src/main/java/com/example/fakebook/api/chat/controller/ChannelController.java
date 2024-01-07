@@ -7,6 +7,7 @@ import com.example.fakebook.api.chat.service.ChannelService;
 import com.example.fakebook.api.common.dto.response.GetChannelResponseDto;
 import com.example.fakebook.global.auth.aop.Auth;
 import com.example.fakebook.global.dto.request.CursorPaginationRequestDto;
+import com.example.fakebook.global.dto.response.CursorPaginationResponseDto;
 import com.example.fakebook.global.dto.response.SuccessDataResponseDto;
 import com.example.fakebook.global.dto.response.SuccessVoidResponseDto;
 import com.example.fakebook.global.enums.Role;
@@ -29,12 +30,12 @@ public class ChannelController {
 
     @Operation(summary = "Get channels")
     @GetMapping
-    public SuccessDataResponseDto<List<GetChannelResponseDto>> getChannels(
+    public CursorPaginationResponseDto<GetChannelResponseDto> getChannels(
             CursorPaginationRequestDto cursorPaginationRequestDto,
             @Parameter(description = "Column name for sorting")
-            @RequestParam ChannelSortField channelSortField
+            @RequestParam ChannelSortField sortField
     ) {
-        return channelService.getChannels(cursorPaginationRequestDto, channelSortField);
+        return channelService.getChannels(cursorPaginationRequestDto, sortField);
     }
 
     @Auth(memberId = {Role.USER, Role.ADMIN})

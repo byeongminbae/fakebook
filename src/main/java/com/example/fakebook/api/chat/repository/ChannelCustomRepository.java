@@ -32,7 +32,7 @@ public class ChannelCustomRepository {
 
         return jpaQueryFactory.selectFrom(qChannel)
                 .where(getIdCondition(cursorPaginationInternalDto))
-                .limit(cursorPaginationInternalDto.getLimit())
+                .limit(getNextEntity(cursorPaginationInternalDto))
                 .orderBy(orderSpecifier)
                 .fetch();
     }
@@ -50,5 +50,9 @@ public class ChannelCustomRepository {
     private OrderSpecifier<?> getOrderSpecifier(Sort.Direction sortDirection, String fieldName) {
         Path<Object> fieldPath = Expressions.path(Object.class, qChannel, fieldName);
         return new OrderSpecifier(sortDirection.isAscending() ? Order.ASC : Order.DESC, fieldPath);
+    }
+
+    private static Integer getNextEntity(CursorPaginationInternalDto cursorPaginationInternalDto){
+        return cursorPaginationInternalDto.getLimit() + 1;
     }
 }

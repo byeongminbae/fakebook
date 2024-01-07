@@ -14,6 +14,7 @@ import com.example.fakebook.global.auth.token.TokenManager;
 import com.example.fakebook.global.auth.token.dto.internal.AccessTokenPayloadInternalDto;
 import com.example.fakebook.global.dto.internal.CursorPaginationInternalDto;
 import com.example.fakebook.global.dto.request.CursorPaginationRequestDto;
+import com.example.fakebook.global.dto.response.CursorPaginationResponseDto;
 import com.example.fakebook.global.dto.response.SuccessDataResponseDto;
 import com.example.fakebook.global.dto.response.SuccessVoidResponseDto;
 import com.example.fakebook.global.exception.BusinessException;
@@ -32,7 +33,7 @@ public class ChannelService {
     private final MemberRepository memberRepository;
     private final TokenManager tokenManager;
 
-    public SuccessDataResponseDto<List<GetChannelResponseDto>> getChannels(
+    public CursorPaginationResponseDto<GetChannelResponseDto> getChannels(
             CursorPaginationRequestDto cursorPaginationRequestDto,
             ChannelSortField channelSortField
     ) {
@@ -40,12 +41,12 @@ public class ChannelService {
                 CursorPaginationInternalDto.from(cursorPaginationRequestDto, channelSortField);
 
         List<Channel> channels = channelCustomRepository.find(cursorPaginationInternalDto);
-        List<GetChannelResponseDto> getChannelResponseDtos = channels.stream()
-                .map(GetChannelResponseDto::from)
-                .toList();
 
-
-        return new SuccessDataResponseDto<>(getChannelResponseDtos);
+        return CursorPaginationResponseDto.from(
+                cursorPaginationInternalDto,
+                channels,
+                GetChannelResponseDto::from
+        );
     }
 
     public SuccessDataResponseDto<CreateChannelResponseDto> createChannel(
@@ -87,7 +88,7 @@ public class ChannelService {
         Member member = memberRepository.findByIdAndDeletedAtIsNullThrowIfNull(memberId);
         Channel channel = channelRepository.findByIdAndDeletedAtIsNullThrowIfNull(channelId);
 
-        if(member.containChannel(channel))
+        if (member.containChannel(channel))
             throw new BusinessException(CommonException.DB_ALREADY_EXIST_EXCEPTION);
 
         ChannelMember channelMember = new ChannelMember();
