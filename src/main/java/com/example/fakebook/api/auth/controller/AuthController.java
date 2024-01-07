@@ -8,7 +8,7 @@ import com.example.fakebook.api.auth.dto.response.RefreshTokenResponseDto;
 import com.example.fakebook.api.auth.dto.response.TokenResponseDto;
 import com.example.fakebook.api.auth.service.AuthService;
 import com.example.fakebook.global.auth.aop.Auth;
-import com.example.fakebook.global.dto.response.SuccessResponseDto;
+import com.example.fakebook.global.dto.response.SuccessDataResponseDto;
 import com.example.fakebook.global.dto.response.SuccessVoidResponseDto;
 import com.example.fakebook.global.enums.Role;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +29,7 @@ public class AuthController {
 
     @Operation(summary = "Sign in with token-based authentication")
     @PostMapping("/token/sign-in")
-    public SuccessResponseDto<TokenResponseDto> signIn(
+    public SuccessDataResponseDto<TokenResponseDto> signIn(
             @RequestBody TokenSignInRequestDto tokenSignInRequestDto
     ) {
         return authService.signIn(tokenSignInRequestDto);
@@ -46,7 +46,7 @@ public class AuthController {
 
     @Operation(summary = "Renew access token using refresh token")
     @PostMapping("/token/renew")
-    public SuccessResponseDto<AccessTokenResponseDto> renew(
+    public SuccessDataResponseDto<AccessTokenResponseDto> renew(
             @RequestBody TokenRenewRequestDto tokenRenewRequestDto
     ) {
         return authService.renew(tokenRenewRequestDto);
@@ -55,7 +55,7 @@ public class AuthController {
     @Auth(memberId = {Role.USER, Role.ADMIN})
     @Operation(summary = "Get refresh token list", security = @SecurityRequirement(name = "Authorization"))
     @GetMapping("/token/refresh")
-    public SuccessResponseDto<List<RefreshTokenResponseDto>> getRefreshTokens(
+    public SuccessDataResponseDto<List<RefreshTokenResponseDto>> getRefreshTokens(
             @Schema(hidden = true)
             @RequestHeader(value = "Authorization", required = false) String authorizationHeader
     ) {

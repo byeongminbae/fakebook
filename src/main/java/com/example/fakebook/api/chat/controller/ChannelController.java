@@ -2,13 +2,16 @@ package com.example.fakebook.api.chat.controller;
 
 import com.example.fakebook.api.chat.dto.request.CreateChannelRequestDto;
 import com.example.fakebook.api.chat.dto.response.CreateChannelResponseDto;
+import com.example.fakebook.api.chat.enums.ChannelSortField;
 import com.example.fakebook.api.chat.service.ChannelService;
 import com.example.fakebook.api.common.dto.response.GetChannelResponseDto;
 import com.example.fakebook.global.auth.aop.Auth;
-import com.example.fakebook.global.dto.response.SuccessResponseDto;
+import com.example.fakebook.global.dto.request.CursorPaginationRequestDto;
+import com.example.fakebook.global.dto.response.SuccessDataResponseDto;
 import com.example.fakebook.global.dto.response.SuccessVoidResponseDto;
 import com.example.fakebook.global.enums.Role;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,14 +29,18 @@ public class ChannelController {
 
     @Operation(summary = "Get channels")
     @GetMapping
-    public SuccessResponseDto<List<GetChannelResponseDto>> getChannels() {
-        return channelService.getChannels();
+    public SuccessDataResponseDto<List<GetChannelResponseDto>> getChannels(
+            CursorPaginationRequestDto cursorPaginationRequestDto,
+            @Parameter(description = "Column name for sorting")
+            @RequestParam ChannelSortField channelSortField
+    ) {
+        return channelService.getChannels(cursorPaginationRequestDto, channelSortField);
     }
 
     @Auth(memberId = {Role.USER, Role.ADMIN})
     @Operation(summary = "Create channel", security = @SecurityRequirement(name = "Authorization"))
     @PostMapping
-    public SuccessResponseDto<CreateChannelResponseDto> createChannel(
+    public SuccessDataResponseDto<CreateChannelResponseDto> createChannel(
             @Schema(hidden = true)
             @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
             @RequestBody CreateChannelRequestDto createChannelRequestDto

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ExceptionResponseDto {
     private final String timestamp = LocalDateTime.now().toString();
-    private final Boolean success = false;
+    private final Boolean isSuccess = false;
     private final String status;
     private final String message;
 }

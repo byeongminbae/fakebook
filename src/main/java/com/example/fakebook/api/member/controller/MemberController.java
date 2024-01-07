@@ -9,7 +9,7 @@ import com.example.fakebook.api.common.dto.response.GetChatResponseDto;
 import com.example.fakebook.api.member.dto.response.GetMemberInfoResponseDto;
 import com.example.fakebook.api.member.service.MemberService;
 import com.example.fakebook.global.auth.aop.Auth;
-import com.example.fakebook.global.dto.response.SuccessResponseDto;
+import com.example.fakebook.global.dto.response.SuccessDataResponseDto;
 import com.example.fakebook.global.dto.response.SuccessVoidResponseDto;
 import com.example.fakebook.global.enums.Role;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +30,7 @@ public class MemberController {
 
     @Operation(summary = "Member creation. Password encrypted with sha512.")
     @PostMapping
-    public SuccessResponseDto<CreateMemberResponseDto> createMember(
+    public SuccessDataResponseDto<CreateMemberResponseDto> createMember(
             @RequestBody CreateMemberRequestDto createMemberRequestDto
     ) {
         return memberService.createMember(createMemberRequestDto);
@@ -41,7 +41,7 @@ public class MemberController {
             security = @SecurityRequirement(name = "Authorization")
     )
     @GetMapping("/{memberId}")
-    public SuccessResponseDto<GetMemberInfoResponseDto> getMember(
+    public SuccessDataResponseDto<GetMemberInfoResponseDto> getMember(
             @PathVariable Long memberId,
             @Schema(hidden = true)
             @RequestHeader(value = "Authorization", required = false) String authorizationHeader
@@ -109,14 +109,14 @@ public class MemberController {
             security = @SecurityRequirement(name = "Authorization")
     )
     @GetMapping("/{memberId}/channels")
-    public SuccessResponseDto<List<GetChannelResponseDto>> getChannels(@PathVariable Long memberId) {
+    public SuccessDataResponseDto<List<GetChannelResponseDto>> getChannels(@PathVariable Long memberId) {
         return memberService.getChannels(memberId);
     }
 
     @Auth(memberId = {Role.USER, Role.ADMIN}, pathVariableMemberIdFieldName = "memberId")
     @Operation(summary = "Get all chats", security = @SecurityRequirement(name = "Authorization"))
     @GetMapping("/{memberId}/channels/{channelId}/chats")
-    public SuccessResponseDto<List<GetChatResponseDto>> getChats(
+    public SuccessDataResponseDto<List<GetChatResponseDto>> getChats(
             @PathVariable Long memberId,
             @PathVariable Long channelId
     ) {

@@ -13,7 +13,7 @@ import com.example.fakebook.api.member.entity.Member;
 import com.example.fakebook.api.member.repository.MemberRepository;
 import com.example.fakebook.api.member.util.MemberUtil;
 import com.example.fakebook.global.auth.token.TokenManager;
-import com.example.fakebook.global.dto.response.SuccessResponseDto;
+import com.example.fakebook.global.dto.response.SuccessDataResponseDto;
 import com.example.fakebook.global.dto.response.SuccessVoidResponseDto;
 import com.example.fakebook.global.exception.BusinessException;
 import com.example.fakebook.global.exception.CommonException;
@@ -34,7 +34,7 @@ public class MemberService {
     private final ChannelRepository channelRepository;
 
 
-    public SuccessResponseDto<CreateMemberResponseDto> createMember(CreateMemberRequestDto createMemberRequestDto) {
+    public SuccessDataResponseDto<CreateMemberResponseDto> createMember(CreateMemberRequestDto createMemberRequestDto) {
         Member duplicatedMember = memberRepository.findBySignId(createMemberRequestDto.getSignId());
 
         if (!Objects.isNull(duplicatedMember))
@@ -51,20 +51,20 @@ public class MemberService {
 
         Member savedMember = memberRepository.save(member);
 
-        return new SuccessResponseDto<>(CreateMemberResponseDto.from(savedMember));
+        return new SuccessDataResponseDto<>(CreateMemberResponseDto.from(savedMember));
     }
 
-    public SuccessResponseDto<GetMemberInfoResponseDto> getMember(Long memberId, String authorizationHeader) {
+    public SuccessDataResponseDto<GetMemberInfoResponseDto> getMember(Long memberId, String authorizationHeader) {
         Member opponent = memberRepository.findByIdAndDeletedAtIsNullThrowIfNull(memberId);
 
         if (!Objects.isNull(authorizationHeader)) {
             Member requester = memberUtil.getOwnerByAccessToken(authorizationHeader);
 
             if (opponent.equals(requester))
-                return new SuccessResponseDto<>(GetMemberPrivateInfoResponseDto.from(opponent));
+                return new SuccessDataResponseDto<>(GetMemberPrivateInfoResponseDto.from(opponent));
         }
 
-        return new SuccessResponseDto<>(GetMemberPublicInfoResponseDto.from(opponent));
+        return new SuccessDataResponseDto<>(GetMemberPublicInfoResponseDto.from(opponent));
     }
 
     public SuccessVoidResponseDto updateMember(
@@ -111,17 +111,17 @@ public class MemberService {
         return new SuccessVoidResponseDto();
     }
 
-    public SuccessResponseDto<List<GetChannelResponseDto>> getChannels(Long memberId){
+    public SuccessDataResponseDto<List<GetChannelResponseDto>> getChannels(Long memberId){
         Member member = memberRepository.findByIdAndDeletedAtIsNullThrowIfNull(memberId);
         List<ChannelMember> channelMembers = member.getChannelMembers();
         List<GetChannelResponseDto> getChannelResponseDtos = channelMembers.stream()
                 .map((channelMember)-> GetChannelResponseDto.from(channelMember.getChannel()))
                 .collect(Collectors.toList());
 
-        return new SuccessResponseDto<>(getChannelResponseDtos);
+        return new SuccessDataResponseDto<>(getChannelResponseDtos);
     }
 
-    public SuccessResponseDto<List<GetChatResponseDto>> getChats(Long memberId, Long channelId){
+    public SuccessDataResponseDto<List<GetChatResponseDto>> getChats(Long memberId, Long channelId){
         Channel channel = channelRepository.findByIdAndChannelMembersMemberIdAndDeletedAtIsNullThrowIfNull(
                 channelId,
                 memberId
@@ -136,6 +136,6 @@ public class MemberService {
                 .map(GetChatResponseDto::from)
                 .collect(Collectors.toList());
 
-        return new SuccessResponseDto<>(chatResponseDtos);
+        return new SuccessDataResponseDto<>(chatResponseDtos);
     }
 }

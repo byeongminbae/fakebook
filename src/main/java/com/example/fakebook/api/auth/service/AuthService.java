@@ -11,7 +11,7 @@ import com.example.fakebook.api.member.repository.MemberRepository;
 import com.example.fakebook.api.member.util.MemberUtil;
 import com.example.fakebook.global.auth.token.TokenManager;
 import com.example.fakebook.global.auth.token.dto.internal.TokenInternalDto;
-import com.example.fakebook.global.dto.response.SuccessResponseDto;
+import com.example.fakebook.global.dto.response.SuccessDataResponseDto;
 import com.example.fakebook.global.dto.response.SuccessVoidResponseDto;
 import com.example.fakebook.global.util.CryptoUtil;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class AuthService {
     private final TokenManager tokenManager;
     private final MemberUtil memberUtil;
 
-    public SuccessResponseDto<TokenResponseDto> signIn(TokenSignInRequestDto tokenSignInRequestDto) {
+    public SuccessDataResponseDto<TokenResponseDto> signIn(TokenSignInRequestDto tokenSignInRequestDto) {
         String encryptedSignPassword = CryptoUtil.encryptSha512(tokenSignInRequestDto.getSignPassword());
 
         Member member = memberRepository.findBySignIdAndSignPasswordAndDeletedAtIsNullThrowIfNull(
@@ -44,7 +44,7 @@ public class AuthService {
 
         memberRepository.save(member);
 
-        return new SuccessResponseDto<>(TokenResponseDto.from(tokenInternalDto));
+        return new SuccessDataResponseDto<>(TokenResponseDto.from(tokenInternalDto));
     }
 
     public SuccessVoidResponseDto signOut(TokenSignOutRequestDto tokenSignOutRequestDto) {
@@ -56,7 +56,7 @@ public class AuthService {
         return new SuccessVoidResponseDto();
     }
 
-    public SuccessResponseDto<AccessTokenResponseDto> renew(TokenRenewRequestDto tokenRenewRequestDto) {
+    public SuccessDataResponseDto<AccessTokenResponseDto> renew(TokenRenewRequestDto tokenRenewRequestDto) {
         Member member = memberUtil.getOwnerByRefreshToken(tokenRenewRequestDto.getRefreshToken());
 
         TokenInternalDto tokenInternalDto = tokenManager.createTokens(
@@ -64,16 +64,16 @@ public class AuthService {
                 member.getRole()
         );
 
-        return new SuccessResponseDto<>(AccessTokenResponseDto.from(tokenInternalDto.getAccessTokenInternalDto()));
+        return new SuccessDataResponseDto<>(AccessTokenResponseDto.from(tokenInternalDto.getAccessTokenInternalDto()));
     }
 
-    public SuccessResponseDto<List<RefreshTokenResponseDto>> getRefreshTokens(String authorizationHeader) {
+    public SuccessDataResponseDto<List<RefreshTokenResponseDto>> getRefreshTokens(String authorizationHeader) {
         Member member = memberUtil.getOwnerByAccessToken(authorizationHeader);
 
         List<RefreshTokenResponseDto> refreshTokenResponseDtos = member.getRefreshTokens().stream()
                 .map(RefreshTokenResponseDto::from)
                 .toList();
 
-        return new SuccessResponseDto<>(refreshTokenResponseDtos);
+        return new SuccessDataResponseDto<>(refreshTokenResponseDtos);
     }
 }

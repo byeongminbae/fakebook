@@ -3,6 +3,8 @@ package com.example.fakebook.api.chat.service;
 import com.example.fakebook.api.chat.dto.request.CreateChannelRequestDto;
 import com.example.fakebook.api.chat.dto.response.CreateChannelResponseDto;
 import com.example.fakebook.api.chat.entity.Channel;
+import com.example.fakebook.api.chat.enums.ChannelSortField;
+import com.example.fakebook.api.chat.repository.ChannelCustomRepository;
 import com.example.fakebook.api.chat.repository.ChannelRepository;
 import com.example.fakebook.api.common.dto.response.GetChannelResponseDto;
 import com.example.fakebook.api.common.entity.ChannelMember;
@@ -10,7 +12,9 @@ import com.example.fakebook.api.member.entity.Member;
 import com.example.fakebook.api.member.repository.MemberRepository;
 import com.example.fakebook.global.auth.token.TokenManager;
 import com.example.fakebook.global.auth.token.dto.internal.AccessTokenPayloadInternalDto;
-import com.example.fakebook.global.dto.response.SuccessResponseDto;
+import com.example.fakebook.global.dto.internal.CursorPaginationInternalDto;
+import com.example.fakebook.global.dto.request.CursorPaginationRequestDto;
+import com.example.fakebook.global.dto.response.SuccessDataResponseDto;
 import com.example.fakebook.global.dto.response.SuccessVoidResponseDto;
 import com.example.fakebook.global.exception.BusinessException;
 import com.example.fakebook.global.exception.CommonException;
@@ -24,18 +28,27 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ChannelService {
     private final ChannelRepository channelRepository;
+    private final ChannelCustomRepository channelCustomRepository;
     private final MemberRepository memberRepository;
     private final TokenManager tokenManager;
 
-    public SuccessResponseDto<List<GetChannelResponseDto>> getChannels() {
-        List<Channel> channels = channelRepository.findAll();
+    public SuccessDataResponseDto<List<GetChannelResponseDto>> getChannels(
+            CursorPaginationRequestDto cursorPaginationRequestDto,
+            ChannelSortField channelSortField
+    ) {
+        CursorPaginationInternalDto cursorPaginationInternalDto =
+                CursorPaginationInternalDto.from(cursorPaginationRequestDto, channelSortField);
+
+        List<Channel> channels = channelCustomRepository.find(cursorPaginationInternalDto);
         List<GetChannelResponseDto> getChannelResponseDtos = channels.stream()
                 .map(GetChannelResponseDto::from)
                 .toList();
-        return new SuccessResponseDto<>(getChannelResponseDtos);
+
+
+        return new SuccessDataResponseDto<>(getChannelResponseDtos);
     }
 
-    public SuccessResponseDto<CreateChannelResponseDto> createChannel(
+    public SuccessDataResponseDto<CreateChannelResponseDto> createChannel(
             String authorizationHeader,
             CreateChannelRequestDto createChannelRequestDto
     ) {
@@ -63,7 +76,7 @@ public class ChannelService {
 
         Channel savedChannel = channelRepository.save(channel);
 
-        return new SuccessResponseDto<>(CreateChannelResponseDto.from(savedChannel));
+        return new SuccessDataResponseDto<>(CreateChannelResponseDto.from(savedChannel));
     }
 
     public SuccessVoidResponseDto deleteChannel() {
