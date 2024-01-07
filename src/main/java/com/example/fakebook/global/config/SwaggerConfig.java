@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
     @Bean
-    public GroupedOpenApi publicApi() {
+    public GroupedOpenApi groupedOpenApi() {
         return GroupedOpenApi.builder()
                 .group("spring-doc-public")
                 .pathsToMatch("/**")

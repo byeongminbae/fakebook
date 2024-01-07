@@ -1,17 +1,17 @@
 package com.example.fakebook.global.dto.response;
 
-import com.example.fakebook.global.dto.internal.CursorPaginationInternalDto;
+import com.example.fakebook.global.dto.request.CursorPaginationRequestDto;
 import com.example.fakebook.global.entity.Base;
 import com.example.fakebook.global.exception.BusinessException;
 import com.example.fakebook.global.exception.CommonException;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 @Getter
@@ -24,24 +24,17 @@ public class CursorPaginationResponseDto<T> {
     private final Integer count;
     private final List<T> data;
 
-    public static <E extends Base, R> CursorPaginationResponseDto<R> from(
-            CursorPaginationInternalDto cursorPaginationInternalDto,
-            List<E> data,
-            Function<E, R> runnable
+    public static <T extends Base, R> CursorPaginationResponseDto<R> from(
+            CursorPaginationRequestDto cursorPaginationRequestDto,
+            List<T> data,
+            Function<T, R> runnable
     ) {
-        boolean hasNext = hasNext(cursorPaginationInternalDto, data);
-
+        boolean hasNext = hasNext(cursorPaginationRequestDto.getLimit(), data);
         StringBuffer nextCursor = new StringBuffer();
 
         if (hasNext) {
-            E lastData = getLastData(cursorPaginationInternalDto, data);
-            data.remove(lastData);
-
-            nextCursor.append("?");
-            nextCursor.append("id=").append(lastData.getId()).append("&");
-            nextCursor.append("limit=").append(cursorPaginationInternalDto.getLimit()).append("&");
-            nextCursor.append("sortDirection=").append(cursorPaginationInternalDto.getSortDirection()).append("&");
-            nextCursor.append("sortField=").append(cursorPaginationInternalDto.getSortField());
+            T lastData = popLastEntity(data);
+            generateNextCursor(cursorPaginationRequestDto, nextCursor, lastData);
         }
 
         List<R> warpedData = data.stream()
@@ -56,14 +49,45 @@ public class CursorPaginationResponseDto<T> {
                 .build();
     }
 
-    private static <E> boolean hasNext(CursorPaginationInternalDto cursorPaginationInternalDto, List<E> data) {
-        return cursorPaginationInternalDto.getLimit().compareTo(data.size()) < 0;
+    private static <T extends Base> boolean hasNext(Integer limit, List<T> data) {
+        return limit.compareTo(data.size()) < 0;
     }
 
-    private static <E extends Base> E getLastData(CursorPaginationInternalDto cursorPaginationInternalDto, List<E> data) {
-        return data.stream()
-                .skip(cursorPaginationInternalDto.getLimit())
+    private static <T extends Base> void generateNextCursor(
+            CursorPaginationRequestDto cursorPaginationRequestDto,
+            StringBuffer nextCursor,
+            T lastData
+    ) {
+        nextCursor.append("?");
+        nextCursor.append("id=").append(lastData.getId()).append("&");
+        nextCursor.append("limit=").append(cursorPaginationRequestDto.getLimit()).append("&");
+        nextCursor.append("sortDirection=").append(cursorPaginationRequestDto.getSortDirection());
+
+        List<Field> fields = List.of(cursorPaginationRequestDto.getClass().getDeclaredFields());
+        for (Field field : fields) {
+            field.setAccessible(true);
+            Object fieldValue = getFieldValue(field, cursorPaginationRequestDto);
+
+            if (!Objects.isNull(fieldValue)) {
+                nextCursor.append("&").append(field.getName()).append("=").append(fieldValue);
+            }
+        }
+    }
+
+    private static Object getFieldValue(Field field, CursorPaginationRequestDto cursorPaginationRequestDto) {
+        try {
+            return field.get(cursorPaginationRequestDto);
+        } catch (IllegalAccessException e) {
+            throw new BusinessException(CommonException.GLOBAL_UNKNOWN_EXCEPTION);
+        }
+    }
+
+    private static <T extends Base> T popLastEntity(List<T> data) {
+        T lastData = data.stream()
+                .skip(data.size() - 1)
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(CommonException.GLOBAL_UNKNOWN_EXCEPTION));
+        data.remove(lastData);
+        return lastData;
     }
 }

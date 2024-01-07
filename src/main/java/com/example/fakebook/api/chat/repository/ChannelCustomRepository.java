@@ -1,11 +1,8 @@
 package com.example.fakebook.api.chat.repository;
 
+import com.example.fakebook.api.chat.dto.request.GetChannelRequestDto;
 import com.example.fakebook.api.chat.entity.Channel;
 import com.example.fakebook.api.chat.entity.QChannel;
-import com.example.fakebook.api.chat.enums.ChannelSortField;
-import com.example.fakebook.global.dto.internal.CursorPaginationInternalDto;
-import com.example.fakebook.global.exception.BusinessException;
-import com.example.fakebook.global.exception.CommonException;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
@@ -24,35 +21,35 @@ import java.util.Objects;
 public class ChannelCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
     private final QChannel qChannel = QChannel.channel;
-    public List<Channel> find(CursorPaginationInternalDto cursorPaginationInternalDto) {
+
+    public List<Channel> find(GetChannelRequestDto getChannelRequestDto) {
         OrderSpecifier<?> orderSpecifier = getOrderSpecifier(
-                cursorPaginationInternalDto.getSortDirection(),
-                cursorPaginationInternalDto.getSortField().getName()
+                getChannelRequestDto.getSortDirection(),
+                getChannelRequestDto.getSortField().getName()
         );
 
         return jpaQueryFactory.selectFrom(qChannel)
-                .where(getIdCondition(cursorPaginationInternalDto))
-                .limit(getNextEntity(cursorPaginationInternalDto))
+                .where(getIdCondition(getChannelRequestDto.getId(), getChannelRequestDto.getSortDirection()))
+                .where(getTitleCondition(getChannelRequestDto.getTitle()))
+                .limit(getNextEntityWithLimit(getChannelRequestDto))
                 .orderBy(orderSpecifier)
                 .fetch();
     }
 
-    private BooleanExpression getIdCondition(CursorPaginationInternalDto cursorPaginationInternalDto) {
-        if (Objects.isNull(cursorPaginationInternalDto.getId())) {
-            return null;
-        }
-        if (cursorPaginationInternalDto.getSortDirection().isAscending()) {
-            return qChannel.id.goe(cursorPaginationInternalDto.getId());
-        }
-        return qChannel.id.loe(cursorPaginationInternalDto.getId());
+    private BooleanExpression getIdCondition(Long id, Sort.Direction sortDirection) {
+        return Objects.isNull(id) ? null : sortDirection.isAscending() ? qChannel.id.goe(id) : qChannel.id.loe(id);
+    }
+
+    private BooleanExpression getTitleCondition(String title) {
+        return Objects.isNull(title) ? null : qChannel.title.contains(title);
+    }
+
+    private static Integer getNextEntityWithLimit(GetChannelRequestDto getChannelRequestDto) {
+        return getChannelRequestDto.getLimit() + 1;
     }
 
     private OrderSpecifier<?> getOrderSpecifier(Sort.Direction sortDirection, String fieldName) {
         Path<Object> fieldPath = Expressions.path(Object.class, qChannel, fieldName);
         return new OrderSpecifier(sortDirection.isAscending() ? Order.ASC : Order.DESC, fieldPath);
-    }
-
-    private static Integer getNextEntity(CursorPaginationInternalDto cursorPaginationInternalDto){
-        return cursorPaginationInternalDto.getLimit() + 1;
     }
 }
