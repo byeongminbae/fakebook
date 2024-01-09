@@ -6,8 +6,13 @@ spring:
     driverClassName: org.h2.Driver
     username: sa
   jpa:
+    properties:
+      hibernate:
+        show_sql: true
     hibernate:
       ddl-auto: update
+
+
 
 springdoc:
   swagger-ui:

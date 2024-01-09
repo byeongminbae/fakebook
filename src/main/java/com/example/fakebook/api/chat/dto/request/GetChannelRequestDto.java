@@ -14,6 +14,6 @@ public class GetChannelRequestDto extends CursorPaginationRequestDto {
     @Parameter(description = "Column name for sorting", required = true)
     private ChannelSortField sortField;
 
-    @Parameter(description = "Search by channel title")
+    @Parameter(description = "Filter by channel title")
     private String title;
 }

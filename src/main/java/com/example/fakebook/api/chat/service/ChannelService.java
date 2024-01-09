@@ -52,7 +52,7 @@ public class ChannelService {
         );
 
         Channel duplicatedChannel = channelRepository.findByTitle(createChannelRequestDto.getTitle());
-        if (!Objects.isNull(duplicatedChannel)) {
+        if (Objects.nonNull(duplicatedChannel)) {
             throw new BusinessException(CommonException.DB_ALREADY_EXIST_EXCEPTION);
         }
 

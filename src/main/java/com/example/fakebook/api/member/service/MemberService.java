@@ -37,7 +37,7 @@ public class MemberService {
     public SuccessDataResponseDto<CreateMemberResponseDto> createMember(CreateMemberRequestDto createMemberRequestDto) {
         Member duplicatedMember = memberRepository.findBySignId(createMemberRequestDto.getSignId());
 
-        if (!Objects.isNull(duplicatedMember))
+        if (Objects.nonNull(duplicatedMember))
             throw new BusinessException(CommonException.DB_ALREADY_EXIST_EXCEPTION);
 
 
@@ -57,7 +57,7 @@ public class MemberService {
     public SuccessDataResponseDto<GetMemberInfoResponseDto> getMember(Long memberId, String authorizationHeader) {
         Member opponent = memberRepository.findByIdAndDeletedAtIsNullThrowIfNull(memberId);
 
-        if (!Objects.isNull(authorizationHeader)) {
+        if (Objects.nonNull(authorizationHeader)) {
             Member requester = memberUtil.getOwnerByAccessToken(authorizationHeader);
 
             if (opponent.equals(requester))

@@ -68,7 +68,7 @@ public class CursorPaginationResponseDto<T> {
             field.setAccessible(true);
             Object fieldValue = getFieldValue(field, cursorPaginationRequestDto);
 
-            if (!Objects.isNull(fieldValue)) {
+            if (Objects.nonNull(fieldValue)) {
                 nextCursor.append("&").append(field.getName()).append("=").append(fieldValue);
             }
         }
