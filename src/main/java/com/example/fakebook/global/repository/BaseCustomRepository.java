@@ -1,7 +1,9 @@
 package com.example.fakebook.global.repository;
 
 import com.example.fakebook.global.dto.request.CursorPaginationRequestDto;
+import com.example.fakebook.global.entity.Base;
 import com.example.fakebook.global.interfaces.SortField;
+import com.example.fakebook.global.util.ReflectionUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -14,7 +16,7 @@ import java.util.Objects;
 
 import static com.querydsl.core.types.dsl.Expressions.path;
 
-public abstract class BasePaginationRepository {
+public abstract class BaseCustomRepository {
     /**
      * @return WHERE c0.id = x
      */
@@ -51,21 +53,21 @@ public abstract class BasePaginationRepository {
                 Expressions.predicate(Ops.LT, sortFieldPath, sortFieldValue);
     }
 
-    protected BooleanBuilder getCursorPaginationQueryCondition(
-            String tableName,
+    protected <T extends Base> BooleanBuilder getCursorPaginationQueryCondition(
+            Class<T> entity,
             CursorPaginationRequestDto cursorPaginationRequestDto,
             SortField sortField
     ) {
         BooleanBuilder queryConditions = new BooleanBuilder();
 
-        Path<?> entityPath = Expressions.path(Objects.class, tableName);
+        Path<?> entityPath = Expressions.path(Objects.class, entity.getSimpleName().toLowerCase());
         Path<Long> idPath = Expressions.path(Long.class, entityPath, "id");
 
         if (Objects.nonNull(cursorPaginationRequestDto.getId()))
-             queryConditions.and(filterById(idPath, cursorPaginationRequestDto.getId()));
+            queryConditions.and(filterById(idPath, cursorPaginationRequestDto.getId()));
 
         if (cursorPaginationRequestDto.isCursorExists()) {
-            Path<?> sortFieldPath = Expressions.path(sortField.getFieldClass(), entityPath, sortField.getFieldName());
+            Path<?> sortFieldPath = Expressions.path(Object.class, entityPath, sortField.getSortFieldName());
             Expression<?> sortFieldValue = sortField.convertSortFieldValue(cursorPaginationRequestDto.getSortFieldValue());
 
             BooleanExpression queryCondition0 = filterBySortField(
@@ -99,8 +101,8 @@ public abstract class BasePaginationRepository {
             Sort.Direction sortDirection,
             SortField sortField
     ) {
-        SimplePath<P> path = path(sortField.getFieldClass(), qEntity, sortField.getFieldName());
-
-        return new OrderSpecifier<>(sortDirection.isAscending() ? Order.ASC : Order.DESC, path);
+        Class<?> type = ReflectionUtil.getFieldType(qEntity.getClass(), sortField.getSortFieldName());
+        SimplePath<?> path = path(type, qEntity, sortField.getSortFieldName());
+        return new OrderSpecifier(sortDirection.isAscending() ? Order.ASC : Order.DESC, path);
     }
 }

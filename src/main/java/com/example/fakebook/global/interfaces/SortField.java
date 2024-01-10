@@ -1,11 +1,11 @@
 package com.example.fakebook.global.interfaces;
 
-import com.example.fakebook.api.chat.dto.request.GetChannelRequestDto;
 import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 
 public interface SortField{
-    String getFieldName();
-    Class getFieldClass();
-    Expression<?> convertSortFieldValue(String sortFieldValue);
+    String getSortFieldName();
+    default Expression<?> convertSortFieldValue(String sortFieldValue) {
+        return Expressions.constant(sortFieldValue);
+    }
 }

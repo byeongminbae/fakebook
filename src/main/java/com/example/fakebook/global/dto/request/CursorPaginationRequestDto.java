@@ -38,7 +38,7 @@ public abstract class CursorPaginationRequestDto {
         this.sortFieldValue = sortFieldValue;
 
         if(validateCursor())
-            throw new BusinessException(CommonException.GLOBAL_INVALID_INPUT_EXCEPTION);
+            throw new BusinessException(CommonException.COMMON_INVALID_INPUT_EXCEPTION);
     }
 
     public boolean isCursorExists(){

@@ -41,7 +41,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
         UriComponents uriComponents = UriComponentsBuilder.fromUriString(String.valueOf(webSocketSession.getUri())).build();
 
         String channelId = uriComponents.getQueryParams().getFirst("channelId");
-        if (Objects.isNull(channelId)) throw new BusinessException(CommonException.CHAT_NOT_FOUND_EXCEPTION);
+        if (Objects.isNull(channelId)) throw new BusinessException(CommonException.CHAT_CHANNEL_NOT_FOUND_EXCEPTION);
 
         return Long.valueOf(channelId);
     }

@@ -1,7 +1,8 @@
 package com.example.fakebook.global.exception;
 
-public interface ExceptionType {
-    String getStatus();
+import org.springframework.http.HttpStatus;
 
-    String getMessage();
+public interface ExceptionType {
+    HttpStatus getHttpStatus();
+    String getName();
 }

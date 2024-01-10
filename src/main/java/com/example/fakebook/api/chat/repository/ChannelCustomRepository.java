@@ -3,7 +3,7 @@ package com.example.fakebook.api.chat.repository;
 import com.example.fakebook.api.chat.dto.request.GetChannelRequestDto;
 import com.example.fakebook.api.chat.entity.Channel;
 import com.example.fakebook.api.chat.entity.QChannel;
-import com.example.fakebook.global.repository.BasePaginationRepository;
+import com.example.fakebook.global.repository.BaseCustomRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -16,7 +16,7 @@ import java.util.Objects;
 
 @Repository
 @RequiredArgsConstructor
-public class ChannelPaginationRepository extends BasePaginationRepository {
+public class ChannelCustomRepository extends BaseCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
     private final QChannel qChannel = QChannel.channel;
 
@@ -39,7 +39,7 @@ public class ChannelPaginationRepository extends BasePaginationRepository {
                 .isAscending() ? qChannel.id.asc() : qChannel.id.desc();
 
         BooleanBuilder cursorPaginationQueryCondition = getCursorPaginationQueryCondition(
-                "channel",
+                Channel.class,
                 getChannelRequestDto,
                 getChannelRequestDto.getSortField()
         );

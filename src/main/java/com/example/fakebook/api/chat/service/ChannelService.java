@@ -4,7 +4,7 @@ import com.example.fakebook.api.chat.dto.request.CreateChannelRequestDto;
 import com.example.fakebook.api.chat.dto.request.GetChannelRequestDto;
 import com.example.fakebook.api.chat.dto.response.CreateChannelResponseDto;
 import com.example.fakebook.api.chat.entity.Channel;
-import com.example.fakebook.api.chat.repository.ChannelPaginationRepository;
+import com.example.fakebook.api.chat.repository.ChannelCustomRepository;
 import com.example.fakebook.api.chat.repository.ChannelRepository;
 import com.example.fakebook.api.common.dto.response.GetChannelResponseDto;
 import com.example.fakebook.api.common.entity.ChannelMember;
@@ -27,7 +27,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ChannelService {
     private final ChannelRepository channelRepository;
-    private final ChannelPaginationRepository channelCustomRepository;
+    private final ChannelCustomRepository channelCustomRepository;
     private final MemberRepository memberRepository;
     private final TokenManager tokenManager;
 

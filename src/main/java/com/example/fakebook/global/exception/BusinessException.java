@@ -4,12 +4,10 @@ import lombok.Getter;
 
 @Getter
 public class BusinessException extends RuntimeException {
-    private final String status;
-    private final String message;
+    private final ExceptionType exceptionType;
 
     public BusinessException(ExceptionType exceptionType) {
-        super(exceptionType.getMessage());
-        this.status = exceptionType.getStatus();
-        this.message = exceptionType.getMessage();
+        super(exceptionType.getName());
+        this.exceptionType = exceptionType;
     }
 }

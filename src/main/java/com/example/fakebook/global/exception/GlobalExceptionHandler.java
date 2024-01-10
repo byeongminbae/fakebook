@@ -10,8 +10,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     protected ResponseEntity<ExceptionResponseDto> businessExceptionHandler(BusinessException businessException) {
         ExceptionResponseDto exceptionResponseDto = ExceptionResponseDto.builder()
-                .status(businessException.getStatus())
-                .message(businessException.getMessage())
+                .statusCode(businessException.getExceptionType().getHttpStatus().value())
+                .statusMessage(businessException.getExceptionType().getHttpStatus().getReasonPhrase())
+                .exceptionType(businessException.getExceptionType().getName())
                 .build();
 
         return ResponseEntity.ok(exceptionResponseDto);

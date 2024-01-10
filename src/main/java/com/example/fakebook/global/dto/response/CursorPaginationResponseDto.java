@@ -5,15 +5,16 @@ import com.example.fakebook.global.entity.Base;
 import com.example.fakebook.global.exception.BusinessException;
 import com.example.fakebook.global.exception.CommonException;
 import com.example.fakebook.global.interfaces.SortField;
+import com.example.fakebook.global.util.ReflectionUtil;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
+
+import static java.util.Objects.nonNull;
 
 
 @Getter
@@ -37,7 +38,7 @@ public class CursorPaginationResponseDto<T> {
 
         if (hasNext) {
             removeHasNextEntity(data);
-            T pageLastData = getPageLastData(data);
+            T pageLastData = getLastData(data);
             generateNextCursor(cursorPaginationRequestDto, sortField, nextCursor, pageLastData);
         }
 
@@ -64,61 +65,43 @@ public class CursorPaginationResponseDto<T> {
             T pageLastData
     ) {
         nextCursor.append("?");
-        if (Objects.nonNull(cursorPaginationRequestDto.getId())) {
+        if (nonNull(cursorPaginationRequestDto.getId())) {
             nextCursor.append("id=").append(cursorPaginationRequestDto.getId()).append("&");
         }
-        nextCursor.append("limit=").append(cursorPaginationRequestDto.getLimit()).append("&");
-        nextCursor.append("sortDirection=").append(cursorPaginationRequestDto.getSortDirection()).append("&");
-        nextCursor.append("uniqueIdValue=").append(pageLastData.getId()).append("&");
-        nextCursor.append("sortFieldValue=").append(getFieldValue(sortField.getFieldName(), pageLastData));
+        nextCursor
+                .append("limit=")
+                .append(cursorPaginationRequestDto.getLimit())
+                .append("&")
+                .append("sortDirection=")
+                .append(cursorPaginationRequestDto.getSortDirection())
+                .append("&")
+                .append("uniqueIdValue=")
+                .append(pageLastData.getId())
+                .append("&")
+                .append("sortFieldValue=")
+                .append(ReflectionUtil.getFieldValue(pageLastData, sortField.getSortFieldName()));
 
         List<Field> fields = List.of(cursorPaginationRequestDto.getClass().getDeclaredFields());
-        for (Field field : fields) {
-            Object fieldValue = getFieldValue(field, cursorPaginationRequestDto);
 
-            if (Objects.nonNull(fieldValue)) {
+        for (Field field : fields) {
+            Object fieldValue = ReflectionUtil.getFieldValue(cursorPaginationRequestDto, field);
+
+            if (nonNull(fieldValue)) {
                 nextCursor.append("&").append(field.getName()).append("=").append(fieldValue);
             }
         }
     }
 
-    private static <T> Object getFieldValue(String fieldName, T clazz) {
-        try {
-            List<Field> fields = new ArrayList<>();
-            fields.addAll(List.of(clazz.getClass().getDeclaredFields()));
-            fields.addAll(List.of(clazz.getClass().getSuperclass().getDeclaredFields()));
-            Field field = fields.stream()
-                    .filter((f) -> f.getName().equals(fieldName))
-                    .findFirst()
-                    .orElseThrow(() -> new BusinessException(CommonException.GLOBAL_UNKNOWN_EXCEPTION));
-            field.setAccessible(true);
-            return field.get(clazz);
-        } catch (IllegalAccessException e) {
-            throw new BusinessException(CommonException.GLOBAL_UNKNOWN_EXCEPTION);
-        }
-    }
 
-    private static <T> Object getFieldValue(Field field, T clazz) {
-        try {
-            field.setAccessible(true);
-            return field.get(clazz);
-        } catch (IllegalAccessException e) {
-            throw new BusinessException(CommonException.GLOBAL_UNKNOWN_EXCEPTION);
-        }
-    }
-
-    private static <T extends Base> T getPageLastData(List<T> data) {
+    private static <T extends Base> T getLastData(List<T> data) {
         return data.stream()
                 .skip(data.size() - 1)
                 .findFirst()
-                .orElseThrow(() -> new BusinessException(CommonException.GLOBAL_UNKNOWN_EXCEPTION));
+                .orElseThrow(() -> new BusinessException(CommonException.COMMON_UNKNOWN_EXCEPTION));
     }
 
     private static <T extends Base> void removeHasNextEntity(List<T> data) {
-        T lastData = data.stream()
-                .skip(data.size() - 1)
-                .findFirst()
-                .orElseThrow(() -> new BusinessException(CommonException.GLOBAL_UNKNOWN_EXCEPTION));
+        T lastData = getLastData(data);
         data.remove(lastData);
     }
 }

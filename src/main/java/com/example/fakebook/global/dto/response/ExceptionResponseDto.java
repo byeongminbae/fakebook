@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class ExceptionResponseDto {
     private final String timestamp = LocalDateTime.now().toString();
     private final Boolean isSuccess = false;
-    private final String status;
-    private final String message;
+    private final Integer statusCode;
+    private final String statusMessage;
+    private final String exceptionType;
 }

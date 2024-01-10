@@ -95,7 +95,7 @@ public class MemberService {
         String confirmSignPassword = updateMemberPasswordRequestDto.getConfirmSignPassword();
 
         if (!(oldSignPassword.equals(member.getSignPassword()) && newSignPassword.equals(confirmSignPassword)))
-            throw new BusinessException(CommonException.GLOBAL_INVALID_INPUT_EXCEPTION);
+            throw new BusinessException(CommonException.COMMON_INVALID_INPUT_EXCEPTION);
 
         member.setSignPassword(updateMemberPasswordRequestDto.getNewSignPassword());
         memberRepository.save(member);

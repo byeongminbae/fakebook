@@ -13,7 +13,6 @@ public interface ChannelRepository extends BaseRepository<Channel, Long> {
 
     Channel findByIdAndChannelMembersMemberIdAndDeletedAtIsNull(Long id, Long memberId);
     Channel findByTitle(String title);
-//    Channel findByTitleAndDeletedAtIsNull(String title);
     default Channel findByIdAndChannelMembersMemberIdAndDeletedAtIsNullThrowIfNull(Long id, Long memberId) {
         Channel entity = findByIdAndChannelMembersMemberIdAndDeletedAtIsNull(id, memberId);
         if (Objects.isNull(entity))
@@ -21,10 +20,4 @@ public interface ChannelRepository extends BaseRepository<Channel, Long> {
         return entity;
     }
 
-//    default Channel findByTitleAndDeletedAtIsNullThrowIfNull(String title){
-//        Channel entity = findByTitleAndDeletedAtIsNull(title);
-//        if (Objects.isNull(entity))
-//            throw new BusinessException(CommonException.DB_NOT_FOUND_EXCEPTION);
-//        return entity;
-//    }
 }
