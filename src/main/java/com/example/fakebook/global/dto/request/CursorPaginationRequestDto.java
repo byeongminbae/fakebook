@@ -4,35 +4,44 @@ import com.example.fakebook.global.exception.BusinessException;
 import com.example.fakebook.global.exception.CommonException;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.domain.Sort;
-
-import java.util.Objects;
 
 import static java.util.Objects.*;
 
 
 @Getter
-@Setter
 public abstract class CursorPaginationRequestDto {
     @Parameter(description = "ID filter, initial page requested with an empty value")
-    private Long id;
+    private final Long id;
+
     @Parameter(description = "Maximum number of data entries", example = "5", required = true)
-    private Integer limit;
+    private final Integer limit;
+
     @Parameter(description = "Sorting direction", example = "DESC", required = true)
-    private Sort.Direction sortDirection;
+    private final Sort.Direction sortDirection;
 
     @Parameter(description = "Unique ID used when SortFieldValue is duplicated in DB")
-    private Long uniqueIdValue;
-    @Parameter(description = "Values that vary depending on sortField")
-    private String sortFieldValue;
+    private final Long uniqueIdValue;
 
-    public void validate() {
-        if (!((isNull(uniqueIdValue) && isNull(sortFieldValue)) || (nonNull(uniqueIdValue) && nonNull(sortFieldValue))))
+    @Parameter(description = "Values that vary depending on sortField")
+    private final String sortFieldValue;
+
+    private boolean validateCursor(){
+        return nonNull(uniqueIdValue) && isNull(sortFieldValue) || isNull(uniqueIdValue) && nonNull(sortFieldValue);
+    }
+
+    public CursorPaginationRequestDto(Long id, Integer limit, Sort.Direction sortDirection, Long uniqueIdValue, String sortFieldValue) {
+        this.id = id;
+        this.limit = limit;
+        this.sortDirection = sortDirection;
+        this.uniqueIdValue = uniqueIdValue;
+        this.sortFieldValue = sortFieldValue;
+
+        if(validateCursor())
             throw new BusinessException(CommonException.GLOBAL_INVALID_INPUT_EXCEPTION);
     }
 
-    public boolean isCursorExist(){
+    public boolean isCursorExists(){
         return nonNull(uniqueIdValue);
     }
 }

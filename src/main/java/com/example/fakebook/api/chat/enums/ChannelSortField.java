@@ -45,6 +45,4 @@ public enum ChannelSortField implements SortField {
 
     private final String fieldName;
     private final Class<?> fieldClass;
-
-    public abstract Expression<?> convertSortFieldValue(String sortFieldValue);
 }
