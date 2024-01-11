@@ -13,4 +13,5 @@ public class ExceptionResponseDto {
     private final Integer statusCode;
     private final String statusMessage;
     private final String exceptionType;
+    private final StackTraceElement[] stackTraceElement;
 }

@@ -13,8 +13,8 @@ public class GlobalExceptionHandler {
                 .statusCode(businessException.getExceptionType().getHttpStatus().value())
                 .statusMessage(businessException.getExceptionType().getHttpStatus().getReasonPhrase())
                 .exceptionType(businessException.getExceptionType().getName())
+                .stackTraceElement(businessException.getStackTrace())
                 .build();
-
         return ResponseEntity.ok(exceptionResponseDto);
     }
 }

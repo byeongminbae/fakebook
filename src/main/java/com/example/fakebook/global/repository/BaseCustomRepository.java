@@ -7,16 +7,21 @@ import com.example.fakebook.global.util.ReflectionUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.SimplePath;
+import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 
 import java.util.Objects;
 
 import static com.querydsl.core.types.dsl.Expressions.path;
 
+@RequiredArgsConstructor
 public abstract class BaseCustomRepository {
+    private final JPAQueryFactory jpaQueryFactory;
     /**
      * @return WHERE c0.id = x
      */
@@ -53,7 +58,11 @@ public abstract class BaseCustomRepository {
                 Expressions.predicate(Ops.LT, sortFieldPath, sortFieldValue);
     }
 
-    protected <T extends Base> BooleanBuilder getCursorPaginationQueryCondition(
+    private String replaceFirstStringToLowercase(String string){
+        return string.substring(0, 1).toLowerCase() + string.substring(1);
+    }
+
+    private <T extends Base> BooleanBuilder getCursorPaginationQueryCondition(
             Class<T> entity,
             CursorPaginationRequestDto cursorPaginationRequestDto,
             SortField sortField
@@ -92,17 +101,50 @@ public abstract class BaseCustomRepository {
         return queryConditions;
     }
 
-    protected static Integer hasNext(Integer limit) {
+    private static Integer hasNext(Integer limit) {
         return limit + 1;
     }
 
     protected <E, P extends Comparable<P>> OrderSpecifier<P> getOrderSpecifier(
-            EntityPathBase<E> qEntity,
+            Class<E> entity,
             Sort.Direction sortDirection,
+            String sortFieldName
+    ) {
+        String entityName = replaceFirstStringToLowercase(entity.getSimpleName());
+        Class<?> type = ReflectionUtil.getFieldType(entity, sortFieldName);
+        Path<?> entityPath = Expressions.path(Objects.class, entityName);
+        SimplePath<?> path = path(type, entityPath, sortFieldName);
+        return new OrderSpecifier(sortDirection.isAscending() ? Order.ASC : Order.DESC, path);
+    }
+
+    protected  <T extends Base> JPQLQuery<T> getBaseQuery(
+            Class<T> entity,
+            CursorPaginationRequestDto cursorPaginationRequestDto,
             SortField sortField
     ) {
-        Class<?> type = ReflectionUtil.getFieldType(qEntity.getClass(), sortField.getSortFieldName());
-        SimplePath<?> path = path(type, qEntity, sortField.getSortFieldName());
-        return new OrderSpecifier(sortDirection.isAscending() ? Order.ASC : Order.DESC, path);
+        BooleanBuilder cursorPaginationQueryCondition = getCursorPaginationQueryCondition(
+                entity,
+                cursorPaginationRequestDto,
+                sortField
+        );
+
+        OrderSpecifier<?> customOrderSpecifier = getOrderSpecifier(
+                sortField.getSortEntityClass(),
+                cursorPaginationRequestDto.getSortDirection(),
+                sortField.getSortFieldName()
+        );
+
+        OrderSpecifier<Long> defaultOrderSpecifier = getOrderSpecifier(
+                entity,
+                cursorPaginationRequestDto.getSortDirection(),
+                "id"
+        );
+
+        PathBuilder<T> entityPath = new PathBuilder<>(entity, entity.getSimpleName().toLowerCase());
+
+        return jpaQueryFactory.selectFrom(entityPath)
+                .where(cursorPaginationQueryCondition)
+                .orderBy(customOrderSpecifier, defaultOrderSpecifier)
+                .limit(hasNext(cursorPaginationRequestDto.getLimit()));
     }
 }

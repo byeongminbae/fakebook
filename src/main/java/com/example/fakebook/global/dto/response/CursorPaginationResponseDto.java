@@ -81,10 +81,8 @@ public class CursorPaginationResponseDto<T> {
                 .append("sortFieldValue=")
                 .append(ReflectionUtil.getFieldValue(pageLastData, sortField.getSortFieldName()));
 
-        List<Field> fields = List.of(cursorPaginationRequestDto.getClass().getDeclaredFields());
-
-        for (Field field : fields) {
-            Object fieldValue = ReflectionUtil.getFieldValue(cursorPaginationRequestDto, field);
+        for (Field field : cursorPaginationRequestDto.getClass().getDeclaredFields()) {
+            Object fieldValue = ReflectionUtil.getFieldValue(cursorPaginationRequestDto, field.getName());
 
             if (nonNull(fieldValue)) {
                 nextCursor.append("&").append(field.getName()).append("=").append(fieldValue);
