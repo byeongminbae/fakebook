@@ -1,4 +1,4 @@
-# Fakebook(Working in progress)
+# Fakebook(Work in progress)
 
 I wrote this in Korean as I'm currently short on time. If I have the time later, I'll rewrite it in English.
 
