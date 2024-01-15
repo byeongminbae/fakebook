@@ -3,13 +3,9 @@ package com.example.fakebook.global.repository;
 import com.example.fakebook.global.dto.request.CursorPaginationRequestDto;
 import com.example.fakebook.global.entity.Base;
 import com.example.fakebook.global.interfaces.SortField;
-import com.example.fakebook.global.util.ReflectionUtil;
-import com.querydsl.core.BooleanBuilder;
+import com.example.fakebook.global.util.StringUtil;
 import com.querydsl.core.types.*;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.core.types.dsl.SimplePath;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -17,134 +13,129 @@ import org.springframework.data.domain.Sort;
 
 import java.util.Objects;
 
-import static com.querydsl.core.types.dsl.Expressions.path;
-
 @RequiredArgsConstructor
 public abstract class BaseCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
+
     /**
-     * @return WHERE c0.id = x
+     * @return WHERE entity.field = value
      */
-    private BooleanExpression filterById(Expression<Long> idPath, Long id) {
-        return Objects.isNull(id) ? null : Expressions.predicate(Ops.EQ, idPath, Expressions.constant(id));
+    protected static BooleanExpression compareField(Expression<?> field, Expression<?> value) {
+//        SimplePath<?> entityFieldSimplePath = getEntityFieldSimplePath(getEntitySimplePath(entityClass), fieldName);
+        return Objects.isNull(value) ? null : Expressions.predicate(Ops.EQ, field, value);
     }
 
     /**
-     * @return WHERE c0.id > x || WHERE c0.id < x
+     * @return WHERE entity.field > value
+     * WHERE entity.field < value
      */
-    private BooleanExpression filterById(Expression<Long> idPath, Long id, Sort.Direction sortDirection) {
-        return sortDirection.isAscending() ?
-                Expressions.predicate(Ops.GT, idPath, Expressions.constant(id)) :
-                Expressions.predicate(Ops.LT, idPath, Expressions.constant(id));
-    }
-
-    /**
-     * @return WHERE c0.description = x
-     */
-    private BooleanExpression filterBySortField(Path<?> sortFieldPath, Expression<?> sortFieldValue) {
-        return Expressions.predicate(Ops.EQ, sortFieldPath, sortFieldValue);
-    }
-
-    /**
-     * @return WHERE c0.description > x || WHERE c0.description < x
-     */
-    private BooleanExpression filterBySortField(
-            Path<?> sortFieldPath,
-            Expression<?> sortFieldValue,
+    protected static BooleanExpression compareField(
+            Expression<?> field,
+            Expression<?> value,
             Sort.Direction sortDirection
     ) {
-        return sortDirection.isAscending() ?
-                Expressions.predicate(Ops.GT, sortFieldPath, sortFieldValue) :
-                Expressions.predicate(Ops.LT, sortFieldPath, sortFieldValue);
+        return Objects.isNull(value) ? null :
+                sortDirection.isAscending() ?
+                        Expressions.predicate(Ops.GT, field, value) :
+                        Expressions.predicate(Ops.LT, field, value);
     }
 
-    private String replaceFirstStringToLowercase(String string){
-        return string.substring(0, 1).toLowerCase() + string.substring(1);
-    }
-
-    private <T extends Base> BooleanBuilder getCursorPaginationQueryCondition(
-            Class<T> entity,
-            CursorPaginationRequestDto cursorPaginationRequestDto,
-            SortField sortField
+    /**
+     * @return WHERE entity_x.field_ab > value_ab OR (entity_x.field_ab = value_ab AND entity_y.field_c > value_c)
+     * WHERE entity_x.field_ab < value_ab OR (entity_x.field_ab = value_ab AND entity_y.field_c < value_c)
+     */
+    protected BooleanExpression getCursorPaginationQueryCondition(
+            Expression<?> fieldAB,
+            Expression<?> valueAB,
+            Expression<?> fieldC,
+            Expression<?> valueC,
+            Sort.Direction sortDirection
     ) {
-        BooleanBuilder queryConditions = new BooleanBuilder();
+//        if (Objects.isNull(fieldAB)
+//                || Objects.isNull(valueAB)
+//                || Objects.isNull(fieldC)
+//                || Objects.isNull(valueC)
+//                || Objects.isNull(sortDirection)
+//        ) {
+//            throw new BusinessException(CommonException.COMMON_INVALID_INPUT_EXCEPTION);
+//        }
 
-        Path<?> entityPath = Expressions.path(Objects.class, entity.getSimpleName().toLowerCase());
-        Path<Long> idPath = Expressions.path(Long.class, entityPath, "id");
+        BooleanExpression booleanExpressionA = compareField(fieldAB, valueAB, sortDirection);
+        BooleanExpression booleanExpressionB = compareField(fieldAB, valueAB);
+        BooleanExpression booleanExpressionC = compareField(fieldC, valueC, sortDirection);
 
-        if (Objects.nonNull(cursorPaginationRequestDto.getId()))
-            queryConditions.and(filterById(idPath, cursorPaginationRequestDto.getId()));
-
-        if (cursorPaginationRequestDto.isCursorExists()) {
-            Path<?> sortFieldPath = Expressions.path(Object.class, entityPath, sortField.getSortFieldName());
-            Expression<?> sortFieldValue = sortField.convertSortFieldValue(cursorPaginationRequestDto.getSortFieldValue());
-
-            BooleanExpression queryCondition0 = filterBySortField(
-                    sortFieldPath,
-                    sortFieldValue,
-                    cursorPaginationRequestDto.getSortDirection()
-            );
-
-            BooleanExpression queryCondition1 = filterBySortField(
-                    sortFieldPath,
-                    sortFieldValue
-            );
-
-            BooleanExpression queryCondition2 = filterById(
-                    idPath,
-                    cursorPaginationRequestDto.getUniqueIdValue(),
-                    cursorPaginationRequestDto.getSortDirection()
-            );
-
-            queryConditions.and(queryCondition0.or(queryCondition1.and(queryCondition2)));
-        }
-        return queryConditions;
+        return booleanExpressionA.or(booleanExpressionB.and(booleanExpressionC));
     }
 
-    private static Integer hasNext(Integer limit) {
+    protected static <T extends Base> EntityPath<T> getEntityPath(Class<T> entityClass) {
+        return new PathBuilder<>(entityClass, StringUtil.replaceFirstStringToLowercase(entityClass.getSimpleName()));
+    }
+
+    protected static <T extends Base> SimplePath<?> getFieldSimplePath(EntityPath<T> entitySimplePath, String fieldName) {
+        return Expressions.path(Object.class, entitySimplePath, fieldName);
+    }
+
+    protected static <T extends Base> StringPath getFieldStringPath(EntityPath<T> entitySimplePath, String fieldName) {
+        return Expressions.stringPath(entitySimplePath, fieldName);
+    }
+
+    protected static Integer hasNext(Integer limit) {
         return limit + 1;
     }
 
-    protected <E, P extends Comparable<P>> OrderSpecifier<P> getOrderSpecifier(
-            Class<E> entity,
-            Sort.Direction sortDirection,
-            String sortFieldName
+    protected OrderSpecifier<?> getOrderSpecifier(
+            SimplePath<?> fieldSimplePath,
+            Sort.Direction sortDirection
     ) {
-        String entityName = replaceFirstStringToLowercase(entity.getSimpleName());
-        Class<?> type = ReflectionUtil.getFieldType(entity, sortFieldName);
-        Path<?> entityPath = Expressions.path(Objects.class, entityName);
-        SimplePath<?> path = path(type, entityPath, sortFieldName);
-        return new OrderSpecifier(sortDirection.isAscending() ? Order.ASC : Order.DESC, path);
+        return new OrderSpecifier(sortDirection.isAscending() ? Order.ASC : Order.DESC, fieldSimplePath);
     }
 
-    protected  <T extends Base> JPQLQuery<T> getBaseQuery(
-            Class<T> entity,
+
+    protected <T extends Base> JPQLQuery<T> getCursorPaginationFullQuery(
+            Class<T> entityClass,
             CursorPaginationRequestDto cursorPaginationRequestDto,
             SortField sortField
     ) {
-        BooleanBuilder cursorPaginationQueryCondition = getCursorPaginationQueryCondition(
-                entity,
-                cursorPaginationRequestDto,
-                sortField
+        EntityPath<T> entityPath = getEntityPath(entityClass);
+        SimplePath<?> sortFieldSimplePath = getFieldSimplePath(entityPath, sortField.getEntityFieldName());
+        SimplePath<?> idFieldSimplePath = getFieldSimplePath(entityPath, "id");
+        JPQLQuery<T> jpqlQuery = jpaQueryFactory.selectFrom(entityPath);
+
+
+        OrderSpecifier<?> orderSpecifier = getOrderSpecifier(
+                sortFieldSimplePath,
+                cursorPaginationRequestDto.getSortDirection()
         );
 
-        OrderSpecifier<?> customOrderSpecifier = getOrderSpecifier(
-                sortField.getSortEntityClass(),
-                cursorPaginationRequestDto.getSortDirection(),
-                sortField.getSortFieldName()
+        OrderSpecifier<?> idFieldOrderSpecifier = getOrderSpecifier(
+                idFieldSimplePath,
+                cursorPaginationRequestDto.getSortDirection()
         );
 
-        OrderSpecifier<Long> defaultOrderSpecifier = getOrderSpecifier(
-                entity,
-                cursorPaginationRequestDto.getSortDirection(),
-                "id"
-        );
-
-        PathBuilder<T> entityPath = new PathBuilder<>(entity, entity.getSimpleName().toLowerCase());
-
-        return jpaQueryFactory.selectFrom(entityPath)
-                .where(cursorPaginationQueryCondition)
-                .orderBy(customOrderSpecifier, defaultOrderSpecifier)
+        jpqlQuery
+                .orderBy(orderSpecifier, idFieldOrderSpecifier)
                 .limit(hasNext(cursorPaginationRequestDto.getLimit()));
+
+        if (cursorPaginationRequestDto.isIdExist()) {
+            jpqlQuery.where(compareField(idFieldSimplePath, Expressions.constant(cursorPaginationRequestDto.getId())));
+        }
+
+        if (cursorPaginationRequestDto.isCursorExists()) {
+            Expression<?> convertedSortFieldValue = sortField.convertSortFieldValue(
+                    cursorPaginationRequestDto.getSortFieldValue()
+            );
+            Expression<Long> convertedIdValue = Expressions.constant(cursorPaginationRequestDto.getUniqueIdValue());
+
+            BooleanExpression cursorPaginationQueryCondition = getCursorPaginationQueryCondition(
+                    sortFieldSimplePath,
+                    convertedSortFieldValue,
+                    idFieldSimplePath,
+                    convertedIdValue,
+                    cursorPaginationRequestDto.getSortDirection()
+            );
+            jpqlQuery.where(cursorPaginationQueryCondition);
+        }
+
+        return jpqlQuery;
     }
 }

@@ -22,10 +22,10 @@ public class ReflectionUtil {
                 .orElseThrow(() -> new BusinessException(CommonException.REFLECTION_FIELD_NOT_FOUND_EXCEPTION));
     }
 
-    private static <T> Object getFieldValue(T clazz, Field field) {
+    private static <T> Object getFieldValue(T instance, Field field) {
         try {
             field.setAccessible(true);
-            return field.get(clazz);
+            return field.get(instance);
         } catch (IllegalAccessException e) {
             throw new BusinessException(CommonException.REFLECTION_UNKNOWN_EXCEPTION);
         }
@@ -36,9 +36,9 @@ public class ReflectionUtil {
         return getField(fields, fieldName).getType();
     }
 
-    public static <T> Object getFieldValue(T object, String fieldName) {
-        List<Field> fields = getAllFieldsByChildAndParent(object.getClass());
+    public static <T> Object getFieldValue(T instance, String fieldName) {
+        List<Field> fields = getAllFieldsByChildAndParent(instance.getClass());
         Field field = getField(fields, fieldName);
-        return getFieldValue(object, field);
+        return getFieldValue(instance, field);
     }
 }

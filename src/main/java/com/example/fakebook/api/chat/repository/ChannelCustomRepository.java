@@ -4,7 +4,10 @@ import com.example.fakebook.api.chat.dto.request.GetChannelRequestDto;
 import com.example.fakebook.api.chat.entity.Channel;
 import com.example.fakebook.api.chat.entity.QChannel;
 import com.example.fakebook.global.repository.BaseCustomRepository;
-import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.EntityPath;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.dsl.*;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
@@ -22,9 +25,16 @@ public class ChannelCustomRepository extends BaseCustomRepository {
     public List<Channel> find(GetChannelRequestDto getChannelRequestDto) {
         BooleanExpression titleFilter = Objects.isNull(getChannelRequestDto.getTitle()) ?
                 null :
-                qChannel.title.contains(getChannelRequestDto.getTitle());
+                getFieldStringPath(getEntityPath(Channel.class), "title")
+                        .contains(getChannelRequestDto.getTitle());
 
-        return getBaseQuery(Channel.class, getChannelRequestDto, getChannelRequestDto.getSortField())
+        JPQLQuery<Channel> cursorPaginationFullQuery = getCursorPaginationFullQuery(
+                Channel.class,
+                getChannelRequestDto,
+                getChannelRequestDto.getSortField()
+        );
+
+        return cursorPaginationFullQuery
                 .where(titleFilter)
                 .fetch();
     }

@@ -10,18 +10,20 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
+
 @Getter
 @RequiredArgsConstructor
 public enum ChannelSortField implements SortField {
-    CREATED_AT(Channel.class, "createdAt") {
+    CREATED_AT("createdAt", "createdAt") {
         @Override
         public Expression<LocalDateTime> convertSortFieldValue(String sortFieldValue) {
             return Expressions.constant(LocalDateTime.parse(sortFieldValue));
         }
     },
-    TITLE(Channel.class, "title"),
-    DESCRIPTION(Channel.class, "description");
+    TITLE("title", "title"),
+    DESCRIPTION( "description", "description"),
+    ID("id", "memberCount");
 
-    private final Class sortEntityClass;
-    private final String sortFieldName;
+    private final String entityFieldName;
+    private final String dtoFieldName;
 }

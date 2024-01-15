@@ -1,10 +1,14 @@
 package com.example.fakebook.global.dto.request;
 
+import com.example.fakebook.global.entity.Base;
 import com.example.fakebook.global.exception.BusinessException;
 import com.example.fakebook.global.exception.CommonException;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import org.springframework.data.domain.Sort;
+
+import java.util.List;
+import java.util.Objects;
 
 import static java.util.Objects.*;
 
@@ -43,5 +47,9 @@ public abstract class CursorPaginationRequestDto {
 
     public boolean isCursorExists(){
         return nonNull(uniqueIdValue);
+    }
+
+    public boolean isIdExist(){
+        return nonNull(id);
     }
 }

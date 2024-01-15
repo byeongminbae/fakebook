@@ -11,8 +11,12 @@ import lombok.Getter;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 
@@ -31,43 +35,39 @@ public class CursorPaginationResponseDto<T> {
             CursorPaginationRequestDto cursorPaginationRequestDto,
             SortField sortField,
             List<T> data,
-            Function<T, R> runnable
+            Function<T, R> function
     ) {
-        boolean hasNext = hasNext(cursorPaginationRequestDto.getLimit(), data);
-        StringBuffer nextCursor = new StringBuffer();
-
-        if (hasNext) {
-            removeHasNextEntity(data);
-            T pageLastData = getLastData(data);
-            generateNextCursor(cursorPaginationRequestDto, sortField, nextCursor, pageLastData);
-        }
-
         List<R> warpedData = data.stream()
-                .map(runnable)
-                .toList();
+                .map(function)
+                .collect(Collectors.toList());
+
+        boolean hasNext = getHasNext(cursorPaginationRequestDto.getLimit(), warpedData);
+        String nextCursor = "";
+        if (hasNext) {
+            removeLastData(warpedData);
+            nextCursor = createNextCursor(cursorPaginationRequestDto, sortField, getLastData(warpedData));
+        }
 
         return CursorPaginationResponseDto.<R>builder()
                 .hasNext(hasNext)
-                .nextCursor(nextCursor.toString())
+                .nextCursor(nextCursor)
+                .count(warpedData.size())
                 .data(warpedData)
-                .count(data.size())
                 .build();
     }
 
-    private static <T extends Base> boolean hasNext(Integer limit, List<T> data) {
-        return limit.compareTo(data.size()) < 0;
-    }
-
-    private static <T extends Base> void generateNextCursor(
+    private static <T> String createNextCursor(
             CursorPaginationRequestDto cursorPaginationRequestDto,
             SortField sortField,
-            StringBuffer nextCursor,
             T pageLastData
     ) {
+        StringBuffer nextCursor = new StringBuffer();
+
         nextCursor.append("?");
-        if (nonNull(cursorPaginationRequestDto.getId())) {
+        if (cursorPaginationRequestDto.isIdExist()) {
             nextCursor.append("id=").append(cursorPaginationRequestDto.getId()).append("&");
         }
+
         nextCursor
                 .append("limit=")
                 .append(cursorPaginationRequestDto.getLimit())
@@ -76,30 +76,34 @@ public class CursorPaginationResponseDto<T> {
                 .append(cursorPaginationRequestDto.getSortDirection())
                 .append("&")
                 .append("uniqueIdValue=")
-                .append(pageLastData.getId())
+                .append(ReflectionUtil.getFieldValue(pageLastData, "id"))
                 .append("&")
                 .append("sortFieldValue=")
-                .append(ReflectionUtil.getFieldValue(pageLastData, sortField.getSortFieldName()));
+                .append(ReflectionUtil.getFieldValue(pageLastData, sortField.getDtoFieldName()));
 
         for (Field field : cursorPaginationRequestDto.getClass().getDeclaredFields()) {
-            Object fieldValue = ReflectionUtil.getFieldValue(cursorPaginationRequestDto, field.getName());
-
+            String fieldName = field.getName();
+            Object fieldValue = ReflectionUtil.getFieldValue(cursorPaginationRequestDto, fieldName);
             if (nonNull(fieldValue)) {
-                nextCursor.append("&").append(field.getName()).append("=").append(fieldValue);
+                nextCursor.append("&").append(fieldName).append("=").append(fieldValue);
             }
         }
+
+        return nextCursor.toString();
     }
 
+    private static boolean getHasNext(Integer limit, List<?> data) {
+        return limit.compareTo(data.size()) < 0;
+    }
 
-    private static <T extends Base> T getLastData(List<T> data) {
+    private static <T> T getLastData(List<T> data) {
         return data.stream()
                 .skip(data.size() - 1)
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(CommonException.COMMON_UNKNOWN_EXCEPTION));
     }
 
-    private static <T extends Base> void removeHasNextEntity(List<T> data) {
-        T lastData = getLastData(data);
-        data.remove(lastData);
+    private static void removeLastData(List<?> data) {
+        data.remove(getLastData(data));
     }
 }
