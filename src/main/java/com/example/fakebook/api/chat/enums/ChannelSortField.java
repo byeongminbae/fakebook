@@ -22,7 +22,7 @@ public enum ChannelSortField implements SortField {
     },
     TITLE("title", "title"),
     DESCRIPTION( "description", "description"),
-    ID("id", "memberCount");
+    MEMBER_COUNT("id", "memberCount");
 
     private final String entityFieldName;
     private final String dtoFieldName;

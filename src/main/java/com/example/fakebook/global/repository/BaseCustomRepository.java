@@ -90,6 +90,12 @@ public abstract class BaseCustomRepository {
         return new OrderSpecifier(sortDirection.isAscending() ? Order.ASC : Order.DESC, fieldSimplePath);
     }
 
+    protected OrderSpecifier<?> getOrderSpecifier(
+            Expression<?> fieldSimplePath,
+            Sort.Direction sortDirection
+    ) {
+        return new OrderSpecifier(sortDirection.isAscending() ? Order.ASC : Order.DESC, fieldSimplePath);
+    }
 
     protected <T extends Base> JPQLQuery<T> getCursorPaginationFullQuery(
             Class<T> entityClass,
