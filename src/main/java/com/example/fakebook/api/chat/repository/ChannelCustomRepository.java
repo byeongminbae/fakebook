@@ -4,10 +4,10 @@ import com.example.fakebook.api.chat.dto.request.GetChannelRequestDto;
 import com.example.fakebook.api.chat.entity.Channel;
 import com.example.fakebook.api.chat.entity.QChannel;
 import com.example.fakebook.api.common.entity.QChannelMember;
+import com.example.fakebook.global.dto.internal.CursorPaginationInternalDto;
 import com.example.fakebook.global.repository.BaseCustomRepository;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
@@ -26,19 +26,23 @@ public class ChannelCustomRepository extends BaseCustomRepository {
     }
 
     private BooleanExpression titleFilter(String title) {
-        return Objects.isNull(title) ?
-                null :
-                Expressions.stringPath(getEntityPath(Channel.class), "title").contains(title);
+        return Objects.isNull(title) ? null : qChannel.title.contains(title);
     }
 
     public List<Channel> find(GetChannelRequestDto getChannelRequestDto) {
         BooleanExpression titleFilter = titleFilter(getChannelRequestDto.getTitle());
+
         switch (getChannelRequestDto.getSortField()) {
             default: {
-                JPQLQuery<Channel> cursorPaginationFullQuery = getCursorPaginationCommonQuery(
+                CursorPaginationInternalDto<Channel> cursorPaginationInternalDto = CursorPaginationInternalDto.from(
                         Channel.class,
-                        getChannelRequestDto,
-                        getChannelRequestDto.getSortField()
+                        qChannel.id,
+                        getChannelRequestDto.getSortField(),
+                        getChannelRequestDto
+                );
+
+                JPQLQuery<Channel> cursorPaginationFullQuery = getCursorPaginationFullQuery(
+                        cursorPaginationInternalDto
                 );
 
                 return cursorPaginationFullQuery
@@ -46,26 +50,24 @@ public class ChannelCustomRepository extends BaseCustomRepository {
                         .fetch();
             }
             case MEMBER_COUNT: {
-                JPQLQuery<Channel> baseQuery = getCursorPaginationBaseQuery(
+                CursorPaginationInternalDto<Channel> cursorPaginationInternalDto = CursorPaginationInternalDto.from(
                         Channel.class,
                         qChannelMember.id.count(),
+                        getChannelRequestDto.getSortField(),
                         getChannelRequestDto
                 );
 
+                JPQLQuery<Channel> baseQuery = getCursorPaginationBaseQuery(cursorPaginationInternalDto);
                 JPQLQuery<Tuple> query = baseQuery
                         .select(qChannel, qChannelMember.id.count())
                         .where(titleFilter)
                         .groupBy(qChannel.id)
                         .leftJoin(qChannel.channelMembers, qChannelMember);
 
-                if (getChannelRequestDto.isCursorExists()) {
+                if (cursorPaginationInternalDto.isCursorExists()) {
                     BooleanExpression cursorPaginationQueryCondition = getCursorPaginationQueryCondition(
-                            Channel.class,
-                            qChannelMember.id.count(),
-                            getChannelRequestDto,
-                            getChannelRequestDto.getSortField()
+                            cursorPaginationInternalDto
                     );
-
                     query = query.having(cursorPaginationQueryCondition);
                 }
 

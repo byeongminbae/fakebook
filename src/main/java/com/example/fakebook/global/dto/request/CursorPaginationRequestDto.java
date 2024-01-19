@@ -3,6 +3,8 @@ package com.example.fakebook.global.dto.request;
 import com.example.fakebook.global.entity.Base;
 import com.example.fakebook.global.exception.BusinessException;
 import com.example.fakebook.global.exception.CommonException;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.dsl.Expressions;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import org.springframework.data.domain.Sort;
@@ -45,11 +47,7 @@ public abstract class CursorPaginationRequestDto {
             throw new BusinessException(CommonException.COMMON_INVALID_INPUT_EXCEPTION);
     }
 
-    public boolean isCursorExists(){
-        return nonNull(uniqueIdValue);
-    }
-
-    public boolean isIdExist(){
+    public boolean isIdExists() {
         return nonNull(id);
     }
 }

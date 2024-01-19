@@ -11,9 +11,6 @@ import lombok.Getter;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -45,7 +42,7 @@ public class CursorPaginationResponseDto<T> {
         String nextCursor = "";
         if (hasNext) {
             removeLastData(warpedData);
-            nextCursor = createNextCursor(cursorPaginationRequestDto, sortField, getLastData(warpedData));
+            nextCursor = getNextCursor(cursorPaginationRequestDto, sortField, getLastData(warpedData));
         }
 
         return CursorPaginationResponseDto.<R>builder()
@@ -56,7 +53,7 @@ public class CursorPaginationResponseDto<T> {
                 .build();
     }
 
-    private static <T> String createNextCursor(
+    private static <T> String getNextCursor(
             CursorPaginationRequestDto cursorPaginationRequestDto,
             SortField sortField,
             T pageLastData
@@ -64,7 +61,7 @@ public class CursorPaginationResponseDto<T> {
         StringBuffer nextCursor = new StringBuffer();
 
         nextCursor.append("?");
-        if (cursorPaginationRequestDto.isIdExist()) {
+        if (cursorPaginationRequestDto.isIdExists()) {
             nextCursor.append("id=").append(cursorPaginationRequestDto.getId()).append("&");
         }
 
