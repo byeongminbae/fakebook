@@ -1,16 +1,17 @@
-# Fakebook(Work in progress)
+# Fakebook
 
-I wrote this in Korean as I'm currently short on time. If I have the time later, I'll rewrite it in English.
+개인 프로젝트이며, 프로젝트의 주체로서 기획, 설계, 구현, 테스트 등 모든 개발 과정을 담당하였습니다.
 
-## Getting Started
+대표적으로 실시간 웹 소켓 기반 채팅, 커서 페이지네이션 추상화, 토큰 기반 인증, 파일 업로드 등의 기능을 구현하고 있습니다.
 
-Before getting started, OpenJDK 17 must be installed.
+커서 페이지네이션을 추상화하는 것에 가장 많은 시간이 소요되었습니다. 동적 쿼리 생성을 위해 QueryDSL 을 사용하였고, 동적으로 클래스에 접근하기 위해 리플렉션을 사용하였습니다.
 
 - Swagger: http://127.0.0.1:8080/swagger-ui/index.html
 - Health Check: http://127.0.0.1:8080/actuator/health
 - H2 Console: http://127.0.0.1:8080/h2-console
 
 ## Features
+- 추상화된 커서 페이지네이션
 - 실시간 웹 소켓 기반 채팅
     - 채널 목록 조회, 생성, 삭제
     - 이전 채팅 불러오기
